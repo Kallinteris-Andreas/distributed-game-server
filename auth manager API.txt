@@ -1,0 +1,24 @@
+token is 32 characters long and consists of A-Z,a-z,0-9
+
+roles is 3 characters long and cosists of 0,1
+First char is Player role, second is Official role and third is Admin role.
+Eg 100 is Player, 001 is Admin, 011 is both Official and Admin
+
+
+
+
+API:
+
+Site - Input as JSON - Response as JSON - Response code
+
+createUser - username,password - <blank> - 200 
+changePassword - token,newpassword - <blank> - 200
+login - username,password - token,roles / <blank> - 200 / 401(if incorrect username/password)
+validateToken - token - username,roles / <blank> - 200 / 401(if invalid token)
+
+
+
+
+
+
+On any other error, response code is 500 and response is a helpful message
