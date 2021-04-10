@@ -1,8 +1,8 @@
-#Auth Server
+# Auth Server
 This server is responsible for the authentication service
 It is made out of 3 components:
 
-##Auth.db
+## Auth.db
 An SQLite3 dabatabase containing a single table with 4 columns as shown below:
 ```
 CREATE TABLE "users" (
@@ -14,7 +14,7 @@ CREATE TABLE "users" (
 );
 ```
 
-##Auth_db.py
+## Auth_db.py
 An interface for our DB with all the required functions
 ```
 def check_username(username):
@@ -27,7 +27,7 @@ def validate_token(token):
 def db_unit_test():
 ```
 
-##Auth_server.py
+## Auth_server.py
 An HTTP server handling JSON POST requests for our service (communicates with auth_db.py)
 ```
 POST /createUser({"username", "password"})

@@ -18,7 +18,7 @@ def create_user(username, password):
     c.execute("INSERT INTO users VALUES (?, ?, ?, '100')", (username, password, token,))
     if check_username(username):
         return False
-    #conn.commit()
+    conn.commit()
     return True
 
 def change_password(token, new_password):
@@ -32,7 +32,7 @@ def login(username, password):
     token = c.fetchone()[0]
     c.execute("SELECT Role FROM users WHERE Username=?", (username,))
     role = c.fetchone()[0]
-    #conn.commit()
+    conn.commit()
     return token, role
 
 #returns the [username] and [role] of the [token], on fail it returns false
