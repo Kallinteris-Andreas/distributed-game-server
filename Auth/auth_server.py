@@ -18,7 +18,7 @@ class auth_handler(BaseHTTPRequestHandler):
             password = (json_body['password'])
             que = (auth_db.create_user(username, password))
             if que == False:
-                self.send_response(401)
+                self.send_response(500)
             else:
                 self.send_response(200)
         elif self.path.endswith('/changePassword'):
