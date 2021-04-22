@@ -1,0 +1,85 @@
+table{
+	width: 100%;
+	border-collapse: collapse;
+}
+td,th{
+	text-align: center;
+	padding: 10px;
+	border: 1px solid black;
+}
+.noborder{
+	border: none;
+}
+.fill{
+	width: 100%;
+	height: 100%;
+}
+.onright{
+	position:absolute;
+	right:10px;
+}
+.bigbtn{
+	min-height:30px;
+	min-width:70px;
+}
+.centbtn{
+	position:relative;
+	left:42%;
+}
+.menubtn{
+	background-color: inherit;
+	margin: 20px;
+	color: white;
+	border: none;
+}
+.menucont{
+	display: inline-block;
+}
+.menubar{
+	background-color: #333;
+}
+.dropmenu{
+	display: none;
+	position: absolute;
+	background-color: white;
+}
+.dropmenu a{
+	padding: 16px;
+	text-decoration: none;
+	color: black;
+	display: block;
+}
+.maintitle{
+	text-align: center;
+}
+body{
+	overflow-x: hidden;
+	background-image: url('background.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+}
+.mainpage{
+	padding: 10px;
+	background-color: #8a8a5c;
+}
+.loginmain{
+	width:30%;
+	margin:auto;
+}
+.arrowdown{
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+.menucont:hover {background-color: #336600;}
+.menucont:hover .dropmenu{display: block;}
+.dropmenu a:hover {background-color: #adad85;}
+
+
+
+

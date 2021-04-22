@@ -1,0 +1,28 @@
+ version: "3.8"
+ networks:
+   mynetwork:
+     driver: bridge
+     ipam:
+      config:
+        - subnet: 172.18.1.0/24
+          gateway: 172.18.1.1
+ services:
+   userInterface:
+     image: php:7.4-apache
+     networks:
+       mynetwork:
+         ipv4_address: 172.18.1.2
+     ports:
+       - "8080:80"
+     volumes:
+       - "./UserInterface:/var/www/html"
+   authmanager:
+     build:
+       context: ./Auth
+     volumes:
+       - "./Auth:/usr/src/app"
+     networks:
+       mynetwork:
+         ipv4_address: 172.18.1.3
+     ports:
+       - "8081:42069"
