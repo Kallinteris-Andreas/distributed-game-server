@@ -26,31 +26,27 @@ td,th{
 	position:relative;
 	left:42%;
 }
-.menubtn{
-	background-color: inherit;
-	margin: 20px;
-	color: white;
-	border: none;
-}
-.menucont{
-	display: inline-block;
-}
+
 .menubar{
-	background-color: #333;
+	background-color: #666666;
 }
-.dropmenu{
-	display: none;
-	position: absolute;
-	background-color: white;
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
 }
-.dropmenu a{
-	padding: 16px;
-	text-decoration: none;
-	color: black;
-	display: block;
+li{
+	display: inline;
 }
 .maintitle{
 	text-align: center;
+}
+a{
+	display: inline-block;
+	padding: 20px;
+	text-decoration: none;
+	color: black;
 }
 body{
 	overflow-x: hidden;
@@ -67,18 +63,8 @@ body{
 	width:30%;
 	margin:auto;
 }
-.arrowdown{
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 3px;
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-}
 
-.menucont:hover {background-color: #336600;}
-.menucont:hover .dropmenu{display: block;}
-.dropmenu a:hover {background-color: #adad85;}
+a:hover {background-color: #336600;}
 
 
 

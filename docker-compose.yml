@@ -1,17 +1,11 @@
  version: "3.8"
  networks:
    mynetwork:
-     driver: bridge
-     ipam:
-      config:
-        - subnet: 172.18.1.0/24
-          gateway: 172.18.1.1
  services:
    userInterface:
      image: php:7.4-apache
      networks:
-       mynetwork:
-         ipv4_address: 172.18.1.2
+       - mynetwork
      ports:
        - "8080:80"
      volumes:
@@ -22,7 +16,23 @@
      volumes:
        - "./Auth:/usr/src/app"
      networks:
-       mynetwork:
-         ipv4_address: 172.18.1.3
+       - mynetwork
      ports:
        - "8081:42069"
+   mongo:
+     image: mongo
+     command: --nojournal
+     networks:
+       - mynetwork
+     ports:
+       - "8082:27017"
+     volumes:
+       - ./mongoVolume:/data/db
+   node:
+     build:
+       context: ./PlayMaster
+     volumes:
+       - ./PlayMaster:/home/node/app
+     ports:
+       - "8083:8081"
+     command: "node init.js"

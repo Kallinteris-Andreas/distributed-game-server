@@ -10,8 +10,7 @@ if (isset($_POST['username']) && isset($_POST['password'])){
 	curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
 	curl_setopt($cq, CURLOPT_RETURNTRANSFER,true);
 	$response=curl_exec($cq);
-	curl_close($cq);
-	if($response==false || curl_getinfo($ch, CURLINFO_HTTP_CODE)!=200){
+	if($response==false || curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){
 		echo('ERROR');
 		exit();
 	}else{
@@ -22,6 +21,7 @@ if (isset($_POST['username']) && isset($_POST['password'])){
 		}
 		echo($res['token']);
 	}
+	curl_close($cq);
 }else{
 	echo('ERROR');
 }

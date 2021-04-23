@@ -1,0 +1,13 @@
+Play: playId,tournamentId ("P" if practice),player1,player2,gameType,gameState
+Tournament : tournamentId,tournamentName
+
+gameType={'chess','tictactoe'}
+
+
+
+
+Method - Url - Input as JSON - Output as JSON
+
+POST /availPlays - username - {plays:[{playId,tournamentName("" if practice),opponent,gameType},...]}
+
+

@@ -32,12 +32,10 @@
  		req.onreadystatechange=function(){
  			if(this.readyState==4&&this.status==200){
  				if(this.responseText=="ERROR"){
- 					if(document.getElementById('errorspace').innerHTML==""){
- 						document.getElementById('errorspace').innerHTML='Wrong username or password.';
- 					}
+ 					document.getElementById('errorspace').innerHTML='Wrong username or password.';
  					document.getElementById('btnlogin').disabled=false;
  				}else{
- 					window.location.replace("welcome.php?token="+this.responseText);
+ 					window.location.replace("home.php?token="+this.responseText);
  				}
  			}
  		}
