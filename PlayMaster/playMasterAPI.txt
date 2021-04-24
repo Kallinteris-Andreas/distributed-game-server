@@ -1,13 +1,11 @@
-Play: playId,tournamentId ("P" if practice),player1,player2,gameType,gameState
-Tournament : tournamentId,tournamentName
-
-gameType={'chess','tictactoe'}
-
-
+Mongo:
+database: Plays
+collections: chessPlays,tttPlays
+documents: playId,tournamentName("" if practice),player1,player2,gameState(fen for chess,... for ttt),isFinished("T"/"F")
 
 
-Method - Url - Input as JSON - Output as JSON
+Method - Url - Input as JSON - Output (ResponseCode&Body)
 
-POST /availPlays - username - {plays:[{playId,tournamentName("" if practice),opponent,gameType},...]}
-
-
+POST - /availPlays - username - [{playId,tournamentName("" if practice),opponent,gameType('chess','tictactoe')},...]
+POST - /getPlay - playId,gameType('chess','tictactoe') - 200&{tournamentName,player1,player2,gameState,isFinished}/404&''
+POST - /updatePlay - username,gameType,playId,move - 200&''/500&''

@@ -7,6 +7,10 @@ td,th{
 	padding: 10px;
 	border: 1px solid black;
 }
+.chessdiv{
+	width: 30%;
+	margin: auto;
+}
 .noborder{
 	border: none;
 }

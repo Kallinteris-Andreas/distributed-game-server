@@ -2,7 +2,7 @@
  networks:
    mynetwork:
  services:
-   userInterface:
+   userinterface:
      image: php:7.4-apache
      networks:
        - mynetwork
@@ -28,11 +28,13 @@
        - "8082:27017"
      volumes:
        - ./mongoVolume:/data/db
-   node:
+   playmaster:
      build:
        context: ./PlayMaster
      volumes:
        - ./PlayMaster:/home/node/app
+     networks:
+       - mynetwork
      ports:
-       - "8083:8081"
+       - "8083:8080"
      command: "node init.js"

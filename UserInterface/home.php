@@ -60,7 +60,7 @@ if(isset($_GET['token'])){
 				}
 			}
 			function updateAvailPlays(req){
-				var res=JSON.parse(req.responseText).plays;
+				var res=JSON.parse(req.responseText);
 			 	if(res.length==0){
 			 		document.getElementById('availPlays').innerHTML='No available plays';
 			 		return;
