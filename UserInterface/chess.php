@@ -86,7 +86,6 @@ if($gameinfoarr['player1']==$username){
 	var game = new Chess('<?php echo($gameinfoarr["gameState"])?>');
 
 	function getPlayState(){
-		//make request
 		var req=new XMLHttpRequest();
 		req.onreadystatechange=function(){
 			if(this.readyState==4){

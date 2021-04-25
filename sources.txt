@@ -1,0 +1,6 @@
+Tic Tac Toe:
+https://github.com/BornaSepic/Tic-Tac-Toe
+
+Chess:
+https://github.com/jhlywa/chess.js
+https://chessboardjs.com/
