@@ -4,6 +4,7 @@ collections: chessPlays,tttPlays
 documents: playId,tournamentName("" if practice),player1,player2,gameState(fen for chess,... for ttt),isFinished("T"/"F")
 
 
+
 Method - Url - Input as JSON - Output (ResponseCode&Body)
 
 POST - /availPlays - username - [{playId,tournamentName("" if practice),opponent,gameType('chess','tictactoe')},...]

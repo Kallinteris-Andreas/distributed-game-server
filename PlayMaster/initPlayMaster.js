@@ -113,7 +113,7 @@ http.createServer( function (req,res){
 			  		if(err!=null){
 			  			throw err;
 			  		}
-			  		if(result.player1!=postData.username && result.player2!=postData.username && result.isFinished=="F"){
+			  		if((result.player1!=postData.username && result.player2!=postData.username)|| result.isFinished=="T"){
 			  			res.writeHead(500);
 			  			res.end('');
 			  			db.close();
@@ -135,7 +135,30 @@ http.createServer( function (req,res){
 							newFinished="T";
 						}
 			  		}else if(collName=='tttPlays'){
-			  			//...
+			  			newStateArr=result.gameState.split('');
+			  			if(!((newStateArr[9]=='X' && result.player1==postData.username)||(newStateArr[9]=='O' && result.player2==postData.username))){
+			  				res.writeHead(500);
+				  			res.end('');
+				  			db.close();
+				  			return;
+			  			}
+
+			  			if(newStateArr[postData.move]!='N'){
+			  				res.writeHead(500);
+				  			res.end('');
+				  			db.close();
+				  			return;
+			  			}
+			  			newStateArr[postData.move]=newStateArr[9];
+			  			if(newStateArr[9]=='X'){
+			  				newStateArr[9]='O';
+			  			}else{
+			  				newStateArr[9]='X';
+			  			}
+			  			if(ttt_game_over(newStateArr)!='N'){
+			  				newFinished='T';
+			  			}
+			  			newState=newStateArr.toString().replaceAll(",","");
 			  		}
 					dbPlays.collection(collName).updateOne({playId:postData.playId},{$set:{gameState:newState,isFinished:newFinished}},function(err,result){
 						if(err!=null || result.modifiedCount!=1){
@@ -156,3 +179,36 @@ http.createServer( function (req,res){
 		res.end('<h1>Url not found</h1>');
 	}
 }).listen(8080);
+
+
+
+
+function ttt_game_over(gameState){
+	//return X,O if won, D for draw, N for not over
+	let winningConditions = [
+	    [0, 1, 2],
+	    [3, 4, 5],
+	    [6, 7, 8],
+	    [0, 3, 6],
+	    [1, 4, 7],
+	    [2, 5, 8],
+	    [0, 4, 8],
+	    [2, 4, 6]
+	];
+	for (let i = 0; i <= 7; i++) {
+        const winCondition = winningConditions[i];
+        let a = gameState[winCondition[0]];
+        let b = gameState[winCondition[1]];
+        let c = gameState[winCondition[2]];
+        if (a === 'N' || b === 'N' || c === 'N') {
+            continue;
+        }
+        if (a === b && b === c ) {
+            return a;
+        }
+    }
+    if(!gameState.includes('N')){
+    	return 'D';
+    }
+    return 'N';
+}
