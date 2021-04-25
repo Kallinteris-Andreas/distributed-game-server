@@ -16,9 +16,9 @@ def create_user(username, password):
         return False
     token = hashlib.sha1(username.encode()).hexdigest()[0:31]
     c.execute("INSERT INTO users VALUES (?, ?, ?, '100')", (username, password, token,))
-    if check_username(username):
-        return False
     conn.commit()
+    if not check_username(username):
+        return False
     return True
 
 def change_password(token, new_password):
