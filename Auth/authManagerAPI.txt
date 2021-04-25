@@ -15,8 +15,8 @@ createUser - username,password - <blank> - 200
 changePassword - token,newpassword - <blank> - 200
 login - username,password - token,role / <blank> - 200 / 401(if incorrect username/password)
 validateToken - token - username,role / <blank> - 200 / 401(if invalid token)
-updateRole - adminToken,username,newrole - <blank> - 200 
-listUsers - adminToken - [{username,roles},...] - 200
+updateRole - username,newrole - <blank> - 200 
+listUsers - <nothing> - [{username,roles},...] - 200
 logout - token - <blank> - 200
 
 
