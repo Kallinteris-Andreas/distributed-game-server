@@ -26,6 +26,10 @@ function submitFinished(req){
 }
 function submitForm(){
 	var usrname=document.getElementById('txtusername').value;
+	if(usrname==""){
+		alert('Username cannot be blank');
+		return;
+	}
 	if(usrname.includes("'") || usrname.includes('"') || usrname.includes(';')){
 		alert('Username cannot contain quotes, double quotes and semicolons');
 		return;

@@ -7,5 +7,5 @@ documents: playId,tournamentName("" if practice),player1,player2,gameState(fen f
 Method - Url - Input as JSON - Output (ResponseCode&Body)
 
 POST - /availPlays - username - [{playId,tournamentName("" if practice),opponent,gameType('chess','tictactoe')},...]
-POST - /getPlay - playId,gameType('chess','tictactoe') - 200&{tournamentName,player1,player2,gameState,isFinished}/404&''
+POST - /getPlay - username,playId,gameType('chess','tictactoe') - 200&{tournamentName,player1,player2,gameState,isFinished}/404&''
 POST - /updatePlay - username,gameType,playId,move - 200&''/500&''

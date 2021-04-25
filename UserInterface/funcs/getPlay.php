@@ -1,9 +1,9 @@
 <?php 
 //GET params: token
-//POST params as JSON: gameType('chess','tictactoe'),move,playId
-//returns: 200/500 code
+//POST params: gameType('chess','tictactoe'),playId
+//returns: 200&gameState/404&''
 
-if(isset($_GET['token'])){
+if(isset($_GET['token'])&&isset($_POST['gameType'])&&isset($_POST['playId'])){
 	$cq=curl_init();
 	curl_setopt($cq,CURLOPT_URL,'http://authmanager:42069/validateToken');
 	curl_setopt($cq, CURLOPT_RETURNTRANSFER,true);
@@ -23,20 +23,19 @@ if(isset($_GET['token'])){
 	http_response_code(500);
 	exit();
 }
-$data = json_decode(file_get_contents('php://input'), true);
-if(!isset($data['gameType'])|| !isset($data['move'])|| !isset($data['playId'])){
-	http_response_code(500);
-	exit();
-}
+
 $cq=curl_init();
-curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/updatePlay');
+curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/getPlay');
 curl_setopt($cq,CURLOPT_POST,true);
+curl_setopt($cq,CURLOPT_RETURNTRANSFER,true);
 curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
-$postValue=json_encode(array('username'=>$username,'gameType'=>$data['gameType'],'playId'=>(int)$data['playId'],'move'=>$data['move']));
+$postValue=json_encode(array('username'=>$username,'gameType'=>$_POST['gameType'],'playId'=>(int)$_POST['playId']));
 curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
-curl_exec($cq);
-if(curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){
-	http_response_code(500);
-}
+$result=curl_exec($cq);
+http_response_code(curl_getinfo($cq, CURLINFO_HTTP_CODE));
 curl_close($cq);
+if(http_response_code()==200){
+	$decresult=json_decode($result,true);
+	echo($decresult['gameState']);
+}
 ?>
