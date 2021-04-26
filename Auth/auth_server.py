@@ -56,6 +56,33 @@ class auth_handler(BaseHTTPRequestHandler):
                 self.send_header('Content-type','application/json')
                 self.end_headers()
                 self.wfile.write(response.encode("utf-8"))
+        elif self.path.endswith('/updateRole'):
+            username = (json_body['username'])
+            role = (json_body['newrole'])
+            print (username)
+            print (role)
+            if auth_db.update_role(username,role):
+                self.send_response(200)
+            else:
+                self.send_response(500)
+            self.end_headers()
+        elif self.path.endswith('/listUsers'):
+            users = auth_db.list_users()
+            keys = ['username', 'role']
+            data = [dict(zip(keys, user)) for user in users]
+            response = json.dumps(data, indent=4)
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.end_headers()
+            self.wfile.write(response.encode("utf-8"))
+        elif self.path.endswith('/logout'):
+            token = (json_body['token'])
+            if auth_db.logout(token):
+                self.send_response(200)
+            else:
+                self.send_response(500)
+            self.end_headers()
+               
         else:
             print(self.path)
             self.send_response(500)
