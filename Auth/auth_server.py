@@ -25,7 +25,7 @@ class auth_handler(BaseHTTPRequestHandler):
                 self.end_headers()
         elif self.path.endswith('/changePassword'):
             token = (json_body['token'])
-            new_password = (json_body['password'])
+            new_password = (json_body['newpassword'])
             (auth_db.change_password(token, new_password))
         elif self.path.endswith('/login'):
             username = (json_body['username'])
