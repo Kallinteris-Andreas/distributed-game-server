@@ -174,6 +174,48 @@ http.createServer( function (req,res){
 			  	});
 			});
         });
+    }else if(req.url=="/createPlay"){
+		var postDataJSON='';
+		req.on('data', function (data) {
+            postDataJSON += data;
+        });
+        req.on('end', function () {
+            var postData = JSON.parse(postDataJSON);
+            MongoClient.connect(url, function(err, db) {
+			  	if (err!=null){
+			  		throw err;
+			  	}
+			  	var dbPlays = db.db("Plays");
+			  	var collName;
+			  	var initGameState;
+			  	if(postData.gameType=='chess'){
+			  		collName='chessPlays';
+			  		initGameState='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+			  	}else{
+			  		collName='tttPlays';
+			  		initGameState='NNNNNNNNNX';
+			  	}
+			  	dbPlays.collection(collName).find({playId:postData.playId}).count(function(err,num){
+			  		if(err!=null){
+			  			throw err;
+			  		}
+			  		if(num>0){
+			  			res.writeHead(200);
+			  			res.end('');
+			  			db.close();
+			  			return;
+			  		}
+			  		dbPlays.collection(collName).insertOne({playId:postData.playId,tournamentName:postData.tournamentName,player1:postData.player1,player2:postData.player2,gameState:initGameState,isFinished:"F"},function(err,insRes){
+						if(err!=null){
+				  			throw err;
+						}
+			  			res.writeHead(200);
+			  			res.end('');
+			  			db.close();
+			  		});
+			  	});
+			});
+        });
 	}else{
 		res.writeHead(404, {'Content-Type': 'text/html'});
 		res.end('<h1>Url not found</h1>');

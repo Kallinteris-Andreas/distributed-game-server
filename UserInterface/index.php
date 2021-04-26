@@ -1,3 +1,15 @@
+<?php 
+if (isset($_GET['token'])){
+	$cq=curl_init();
+	curl_setopt($cq,CURLOPT_URL,'http://authmanager:42069/logout');
+	curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
+	$postValue=json_encode(array('token'=>$_GET['token']));
+	curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
+	curl_setopt($cq, CURLOPT_RETURNTRANSFER,true);
+	$response=curl_exec($cq);
+	curl_close($cq);
+}?>
+
 <html>
  <head>
   <title>Log In</title>

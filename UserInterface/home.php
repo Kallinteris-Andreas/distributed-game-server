@@ -28,6 +28,7 @@ if(isset($_GET['token'])){
  	<div class='menubar'>
  		<ul>
  			<li><a href='home.php?token=<?php echo($_GET["token"]) ?>'>Home</a></li>
+ 			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
  			<?php 
  				if($role[1]=="1"){
  					echo("<li><a href='official.php?token=".$_GET["token"]."'>Tournaments</a></li>");
