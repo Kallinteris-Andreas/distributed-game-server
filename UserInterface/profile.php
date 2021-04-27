@@ -18,10 +18,20 @@ if(isset($_GET['token'])){
 }else{
 	exit(header("Location: index.php"));
 }
+$cq=curl_init();
+curl_setopt($cq,CURLOPT_URL,'http://gamemaster:8080/getMyScores');
+curl_setopt($cq,CURLOPT_POST,true);
+curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
+$postValue=json_encode(array('username'=>$username));
+curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
+curl_setopt($cq,CURLOPT_RETURNTRANSFER,true);
+$res=json_decode(curl_exec($cq),true);
+curl_close($cq);
+
 ?>
 <html>
  <head>
-  <title>Home</title>
+  <title>My profile</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
  </head>
  <body>
@@ -29,10 +39,9 @@ if(isset($_GET['token'])){
  		<ul>
  			<li><a href='home.php?token=<?php echo($_GET["token"]) ?>'>Home</a></li>
  			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
+ 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>View tournaments</a></li>
+ 			<li><a href='allPlayers.php?token=<?php echo($_GET["token"]) ?>'>View all player scores</a></li>
  			<?php 
- 				if($role[1]=="1"){
- 					echo("<li><a href='official.php?token=".$_GET["token"]."'>Tournaments</a></li>");
- 				}
  				if($role[2]=="1"){
  					echo("<li><a href='admin.php?token=".$_GET["token"]."'>Administration</a></li>");
  				}
@@ -41,10 +50,39 @@ if(isset($_GET['token'])){
  		</ul>
 	</div>
 	<div class='mainpage'>
-		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><p><p>
+		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><br><br>
 		Username: <?php echo($username)?> <input type='button' class='bigbtn' onclick='changePsw()' value='Change password...'/>
-		<p>
+		<p>Practice plays score is <?php echo($res['practiceScore'])?> in <?php echo($res['practicePlaysNum'])?> games
+		<p>Tournament plays score is <?php echo($res['tournamentScore'])?> in <?php echo($res['tournamentPlaysNum'])?> games
+		<p>Number of total plays won: <?php echo($res['wins'])?>
+		<p>Number of total ties: <?php echo($res['ties'])?>
+		<p>Number of total plays lost: <?php echo($res['losses'])?>
+		<div>
+<?php
+$playarr=$res['plays'];
+if(count($playarr)==0){
+	echo('No plays yet');
+}else{
+	echo('<table><tr><th>Game type</th><th>Opponent</th><th>Tournament name/Practice</th><th>Score</th></tr>');
+	for($i=0;$i<count($playarr);$i++){
+		echo('<tr><td>');
+		if($playarr[$i]['gameType']=='chess'){
+			echo('Chess');
+		}else if($playarr[$i]['gameType']=='tictactoe'){
+			echo('Tic Tac Toe');
+		}
+		echo('</td><td>'.$playarr[$i]['opponent'].'</td><td>');
+		if($playarr[$i]['tournamentName']==''){
+			echo('Practice');
+		}else{
+			echo($playarr[$i]['tournamentName']);
+		}
+		echo('</td><td>'.$playarr[$i]['score'].'</td></tr>');
+	}
+	echo('</table>');
+}?>
 
+		</div>
 	</div>
 
 	<script>

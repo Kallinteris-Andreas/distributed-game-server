@@ -1,0 +1,125 @@
+gameType is one of 'chess','tictactoe'
+tournamentName is "" for practice plays
+
+
+
+Method - Url - Input as JSON - Output as JSON
+
+POST - /newPractice - username,gameType - playId
+POST - /cancelNewPractice - username - <nothing>
+GET - /gameFinished - <nothing> - <nothing>
+POST - /getMyScores - username - <see below>
+GET - /getTournaments - <nothing> - <see below>
+GET - /getAllPlayers - <nothing> - <see below>
+POST - /createTournament - tournamentName - <nothing> (500 response if tournament name is taken, else 200)
+
+
+
+
+
+
+
+
+Hostnames and Ports:
+User Interface:  userinterface:80
+Auth Manager:    authmanager:42069
+PlayMaster:      playmaster:8080
+Mongo DB:        mongo:27017
+GameMaster:      gamemaster:8080
+
+
+
+
+NOTES:
+/newPractice may take a long time to find opponent and user interface might hang up in the meantime. GameMaster should still create the game unless he receives a /cancelNewPractice before the game is created. To create a play use /createPlay command in PlayMaster API (and keep calling it until you get a 200 response because playmasters might die at any moment).
+
+/gameFinished serves as a notification for gameMaster to check for all finished games. GameMaster should then check directly the mongo db for all finished games and remove them.
+
+/createTournament adds all users with role Player to the new tournament
+
+Example output for /getMyScores:
+{
+	"practiceScore":52,
+	"practicePlaysNum":68,
+	"tournamentScore":34,
+	"tournamentPlaysNum":52,
+	"wins":20,
+	"ties":5,
+	"losses":13,
+	"plays":[
+				{
+					"gameType":"chess",
+					"opponent":"user1",
+					"tournamentName":"World Cup",
+					"score":3
+				},
+				{
+					"gameType":"tictactoe",
+					"opponent":"Andy",
+					"tournamentName":"",
+					"score":0	
+				}
+			]
+}
+
+
+Example output for /getTournaments:
+[
+	{
+		"tournamentName":"World Cup",
+		"gameType":"chess",
+		"place1":"Andy",
+		"place2":"user3",
+		"place3":"user1",
+		"place4":"user2",
+		"plays":[
+					{
+						"player1":"Andy",
+						"player2":"user2",
+						"score":"3-0"
+					},
+					{
+						"player1":"user1",
+						"player2":"user3",
+						"score":"1-1"
+					}
+				]
+
+	},
+	{
+		"tournamentName":"Unfinished Tournament",
+		"gameType":"tictactoe",
+		"place1":"-",
+		"place2":"-",
+		"place3":"-",
+		"place4":"-",
+		"plays":[
+					{
+						"player1":"Andy",
+						"player2":"user2",
+						"score":"-"
+					},
+					{
+						"player1":"user1",
+						"player2":"user3",
+						"score":"3-0"
+					}
+				]
+
+	}
+]
+
+
+Example output for /getAllPlayers:
+[
+	{
+		"username":"Andy",
+		"practiceScore":52,
+		"tournamentScore":34
+	},
+	{
+		"username":"user1",
+		"practiceScore":76,
+		"tournamentScore":21
+	}
+]

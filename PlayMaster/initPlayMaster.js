@@ -16,7 +16,7 @@ http.createServer( function (req,res){
 			  	var dbPlays = db.db("Plays");
 			  	var finResult=[];
 			  	var finCounter=0;
-			 	dbPlays.collection("chessPlays").find({$and:[{$or:[{player1:postData.username},{player2:postData.username}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0}}).toArray(function(err,result){
+			 	dbPlays.collection("chessPlays").find({$and:[{$or:[{player1:postData.username},{player2:postData.username}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0,winner:0}}).toArray(function(err,result){
 			 		if(err!=null){
 			 			throw err;
 			 		}
@@ -36,7 +36,7 @@ http.createServer( function (req,res){
 						db.close();
 			 		}
 				});
-				dbPlays.collection("tttPlays").find({$and:[{$or:[{player1:postData.username},{player2:postData.username}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0}}).toArray(function(err,result){
+				dbPlays.collection("tttPlays").find({$and:[{$or:[{player1:postData.username},{player2:postData.username}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0,winner:0}}).toArray(function(err,result){
 			 		if(err!=null){
 			 			throw err;
 			 		}
@@ -76,7 +76,7 @@ http.createServer( function (req,res){
 			  	}else{
 			  		collName='tttPlays';
 			  	}
-			  	dbPlays.collection(collName).findOne({playId:postData.playId},{projection:{_id:0,playId:0}},function(err,result){
+			  	dbPlays.collection(collName).findOne({playId:postData.playId},{projection:{_id:0,playId:0,winner:0}},function(err,result){
 			  		if(err!=null){
 			  			throw err;
 			  		}
@@ -121,6 +121,7 @@ http.createServer( function (req,res){
 			  		}
 			  		var newState;
 			  		var newFinished="F";
+			  		var newWinner="";
 			  		if(collName=='chessPlays'){
 			  			const { Chess } = require('chess.js');
 						var chess = new Chess(result.gameState);
@@ -133,6 +134,13 @@ http.createServer( function (req,res){
 						newState=chess.fen();
 						if(chess.game_over()){
 							newFinished="T";
+							if(chess.in_checkmate()){
+								if(chess.turn()=='w'){
+									newWinner=result.player2;
+								}else{
+									newWinner=result.player1;
+								}
+							}
 						}
 			  		}else if(collName=='tttPlays'){
 			  			newStateArr=result.gameState.split('');
@@ -155,12 +163,18 @@ http.createServer( function (req,res){
 			  			}else{
 			  				newStateArr[9]='X';
 			  			}
-			  			if(ttt_game_over(newStateArr)!='N'){
+			  			var tmp=ttt_game_over(newStateArr)
+			  			if(tmp!='N'){
 			  				newFinished='T';
+			  				if(tmp=='X'){
+			  					newWinner=result.player1;
+			  				}else if(tmp=='O'){
+			  					newWinner=result.player2;
+			  				}
 			  			}
 			  			newState=newStateArr.toString().replaceAll(",","");
 			  		}
-					dbPlays.collection(collName).updateOne({playId:postData.playId},{$set:{gameState:newState,isFinished:newFinished}},function(err,result){
+					dbPlays.collection(collName).updateOne({playId:postData.playId},{$set:{gameState:newState,isFinished:newFinished,winner:newWinner}},function(err,result){
 						if(err!=null || result.modifiedCount!=1){
 							res.writeHead(500);
 				  			res.end('');
@@ -205,7 +219,7 @@ http.createServer( function (req,res){
 			  			db.close();
 			  			return;
 			  		}
-			  		dbPlays.collection(collName).insertOne({playId:postData.playId,tournamentName:postData.tournamentName,player1:postData.player1,player2:postData.player2,gameState:initGameState,isFinished:"F"},function(err,insRes){
+			  		dbPlays.collection(collName).insertOne({playId:postData.playId,tournamentName:postData.tournamentName,player1:postData.player1,player2:postData.player2,gameState:initGameState,isFinished:"F",winner:""},function(err,insRes){
 						if(err!=null){
 				  			throw err;
 						}

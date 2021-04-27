@@ -29,10 +29,9 @@ if(isset($_GET['token'])){
  		<ul>
  			<li><a href='home.php?token=<?php echo($_GET["token"]) ?>'>Home</a></li>
  			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
+ 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>View tournaments</a></li>
+ 			<li><a href='allPlayers.php?token=<?php echo($_GET["token"]) ?>'>View all player scores</a></li>
  			<?php 
- 				if($role[1]=="1"){
- 					echo("<li><a href='official.php?token=".$_GET["token"]."'>Tournaments</a></li>");
- 				}
  				if($role[2]=="1"){
  					echo("<li><a href='admin.php?token=".$_GET["token"]."'>Administration</a></li>");
  				}
@@ -41,9 +40,14 @@ if(isset($_GET['token'])){
  		</ul>
 	</div>
 	<div class='mainpage'>
-		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><p><p>
+		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><br><br>
 		<input type='button' class='bigbtn' onclick='practiceChess()' value='Practice play chess'/>
 		<input type='button' class='bigbtn' onclick='practiceTTT()' value='Practice play tic tac toe'/>
+		<?php 
+		if($role[1]=="1"){
+			echo("<input type='button' class='bigbtn' onclick='createTourn()' value='Create new tournament'/>");
+		}
+ 		?>
 		<p>
 		<h2>Available plays:</h2>
 		<div id='availPlays'>
@@ -52,6 +56,15 @@ if(isset($_GET['token'])){
 	</div>
 
 	<script>
+		function createTourn(){
+			//////////////////TODO: implement
+		}
+		function practiceChess(){
+			///////////////////TODO: implement
+		}
+		function practiceTTT(){
+			//////////////////TODO: implement
+		}
 		function goToGame(playId,gameType){
 			var strVars='?playId='+playId+'&token=<?php echo($_GET["token"]) ?>';
 			if(gameType=='chess'){

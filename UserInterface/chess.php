@@ -157,7 +157,7 @@ if($gameinfoarr['player1']==$username){
 				status.innerHTML = 'Checkmate: <?php echo($username)?> won.';
 			}
 		}else if (game.in_draw()) {// draw?
-			status = 'Game over, it\'s a draw';
+			status.innerHTML = 'Game over, it\'s a draw';
 		}else {// game still on
 			if(game.turn() === '<?php echo($mycolor)?>'){
 				status.innerHTML = '<?php echo($username)?> to move';
