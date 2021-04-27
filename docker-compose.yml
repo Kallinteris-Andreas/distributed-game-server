@@ -20,7 +20,8 @@
      ports:
        - "8081:42069"
    mongo:
-     image: mongo
+     build:
+       context: ./MongoDB
      command: --nojournal
      networks:
        - mynetwork
