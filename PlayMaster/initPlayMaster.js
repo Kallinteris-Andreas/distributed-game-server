@@ -9,12 +9,6 @@ http.createServer( function (req,res){
         });
         req.on('end', function () {
             var postData = JSON.parse(postDataJSON);
-            if(postData.playId==null){
-            	res.writeHead(500);
-            	res.end('');
-            	db.close();
-            	return;
-            }
             MongoClient.connect(url, function(err, db) {
 			  	if (err!=null){
 			  		throw err;
@@ -201,6 +195,12 @@ http.createServer( function (req,res){
         });
         req.on('end', function () {
             var postData = JSON.parse(postDataJSON);
+            if(postData.playId==null){
+            	res.writeHead(500);
+            	res.end('');
+            	db.close();
+            	return;
+            }
             MongoClient.connect(url, function(err, db) {
 			  	if (err!=null){
 			  		throw err;
