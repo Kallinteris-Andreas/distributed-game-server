@@ -53,7 +53,6 @@ if($role[2]!='1'){
 			var req=new XMLHttpRequest();
 			req.onreadystatechange=function(){
 				if(this.readyState==4 && this.status==200){
-					console.log(this.responseText);
 				 	var res=JSON.parse(req.responseText);
 				 	var str='<tr><th>Username</th><th>Roles</th><th class="noborder"></th></tr>';
 				 	for(var i=0; i<res.length; i++){
@@ -78,7 +77,54 @@ if($role[2]!='1'){
 		}
 
 		function editUpdateRole (num,oldrole) { 
-			///////TODO: implement
+			var btn=document.getElementById('btn'+num);
+			if(btn.value=='Change roles'){
+				btn.value='Save';
+				var btnlist=document.getElementsByClassName('bigbtn');
+				for(var i=0; i<btnlist.length; i++){
+					if(btnlist[i].id!=btn.id){
+						btnlist[i].disabled=true;
+					}
+				}
+				var str='<input type="checkbox" id="playerRole"><label for="playerRole"> Player</label><br>';
+				str+='<input type="checkbox" id="officialRole"><label for="officialRole"> Official</label><br>';
+				str+='<input type="checkbox" id="adminRole"><label for="adminRole"> Admin</label>';
+				document.getElementById('role'+num).innerHTML=str;
+				if(oldrole[0]=="1"){
+					document.getElementById('playerRole').checked=true;
+				}
+				if(oldrole[1]=="1"){
+					document.getElementById('officialRole').checked=true;
+				}
+				if(oldrole[2]=="1"){
+					document.getElementById('adminRole').checked=true;
+				}
+			}else{
+				btn.disabled=true;
+				var i="0";
+				var j="0";
+				var k="0";
+				if(document.getElementById('playerRole').checked==true){
+					i="1";
+				}
+				if(document.getElementById('officialRole').checked==true){
+					j="1";
+				}
+				if(document.getElementById('adminRole').checked==true){
+					k="1";
+				}
+				var newrole=i+j+k;
+				var username=document.getElementById('usr'+num).innerHTML;
+				var req=new XMLHttpRequest();
+				req.onreadystatechange=function(){
+					if(this.readyState==4){
+						refreshUsers();
+					}
+				}
+				req.open("POST",'funcs/updateRole.php?token=<?php echo($_GET["token"])?>',true);
+				req.setRequestHeader("Content-type", "application/json");
+				req.send(JSON.stringify({username:username,newrole:newrole}));
+			}
 		}
 		refreshUsers();
 	</script>
