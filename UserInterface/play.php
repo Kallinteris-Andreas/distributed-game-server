@@ -18,18 +18,21 @@ if(isset($_GET['token'])){
 }else{
 	exit(header("Location: index.php"));
 }
+if($role[0]!='1'){
+	exit(header("Location: index.php?token=".$_GET['token']));
+}
 ?>
 <html>
  <head>
-  <title>Home</title>
+  <title>Play</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
  </head>
  <body onload='getAvailPlays()'>
  	<div class='menubar'>
  		<ul>
- 			<li><a href='home.php?token=<?php echo($_GET["token"]) ?>'>Home</a></li>
  			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
- 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>View tournaments</a></li>
+ 			<li><a href='play.php?token=<?php echo($_GET["token"]) ?>'>Play</a></li>
+ 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>Tournaments</a></li>
  			<li><a href='allPlayers.php?token=<?php echo($_GET["token"]) ?>'>View all player scores</a></li>
  			<?php 
  				if($role[2]=="1"){
@@ -41,13 +44,10 @@ if(isset($_GET['token'])){
 	</div>
 	<div class='mainpage'>
 		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><br><br>
-		<input type='button' class='bigbtn' onclick='practiceChess()' value='Practice play chess'/>
-		<input type='button' class='bigbtn' onclick='practiceTTT()' value='Practice play tic tac toe'/>
-		<?php 
-		if($role[1]=="1"){
-			echo("<input type='button' class='bigbtn' onclick='createTourn()' value='Create new tournament'/>");
-		}
- 		?>
+		<input id='btnC' type='button' class='bigbtn' onclick='practicePlay("chess")' value='Practice play chess'/>
+		<input id='btnT' type='button' class='bigbtn' onclick='practicePlay("tictactoe")' value='Practice play tic tac toe'/>
+		<span id='txtLoading' style='display:none; white-space:pre'>Searching for second player...   </span>
+		<input id='btnCancel' type='button' class='bigbtn' style='display:none' onclick='cancelPracticeSearch()' value='Cancel'/>
 		<p>
 		<h2>Available plays:</h2>
 		<div id='availPlays'>
@@ -56,14 +56,58 @@ if(isset($_GET['token'])){
 	</div>
 
 	<script>
-		function createTourn(){
-			//////////////////TODO: implement
+		var req=null;
+		var animActive=false;
+		function practicePlay(gameType){
+			var link='chess';
+			if(gameType=='tictactoe'){
+				link='ttt';
+			}
+			document.getElementById('btnC').style.display='none';
+			document.getElementById('btnT').style.display='none';
+			document.getElementById('txtLoading').style.display='initial';
+			document.getElementById('btnCancel').style.display='initial';
+			req=new XMLHttpRequest();
+			req.onreadystatechange=function(){
+				if(this.readyState==4 && this.status==200){
+					var newPlayId=JSON.parse(this.responseText).playId;
+					window.location.replace(link+'.php?playId='+newPlayId+'&token=<?php echo($_GET["token"])?>');
+				}
+			}
+			req.open("POST",'funcs/reqPractice.php?token=<?php echo($_GET["token"])?>',true);
+			req.setRequestHeader("Content-type", "application/json");
+			req.send('{"gameType":"'+gameType+'"}');
+			if(!animActive){
+				setTimeout(loading,1000);
+			}
+			animActive=true;
 		}
-		function practiceChess(){
-			///////////////////TODO: implement
+		function loading(){
+			if(txt.style.display=='none'){
+				animActive=false;
+				return;
+			}
+			let txt=document.getElementById('txtLoading');
+			if(txt.innerHTML.endsWith("...")){
+				txt.innerHTML='Searching for second player...   ';
+			}else{
+				txt.innerHTML='Searching for second player......';
+			}
+			setTimeout(loading,1000);
 		}
-		function practiceTTT(){
-			//////////////////TODO: implement
+		function cancelPracticeSearch(){
+			req.abort();
+			document.getElementById('btnCancel').style.display='none';
+			document.getElementById('txtLoading').style.display='none';
+			req=new XMLHttpRequest();
+			req.onreadystatechange=function(){
+				if(this.readyState==4){
+					document.getElementById('btnC').style.display='initial';
+					document.getElementById('btnT').style.display='initial';
+				}
+			};
+			req.open("GET",'funcs/cancelPractice.php?token=<?php echo($_GET["token"])?>',true);
+			req.send();			
 		}
 		function goToGame(playId,gameType){
 			var strVars='?playId='+playId+'&token=<?php echo($_GET["token"]) ?>';

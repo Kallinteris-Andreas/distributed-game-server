@@ -26,3 +26,4 @@ POST - /availPlays - username - [{playId,tournamentName("" if practice),opponent
 POST - /getPlay - username,playId,gameType('chess','tictactoe') - 200&{tournamentName,player1,player2,gameState,isFinished}/404&''
 POST - /updatePlay - username,gameType,playId,move - 200&''/500&''
 POST - /createPlay - playId,player1,player2,gameType,tournamentName - 200&''
+

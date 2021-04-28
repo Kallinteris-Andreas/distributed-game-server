@@ -17,9 +17,14 @@ if(isset($_GET['token'])){
 	}else{
 		$res=json_decode($response,true);
 		$username=$res['username'];
+		$role=$res['role'];
 	}
 	curl_close($cq);
 }else{
+	http_response_code(500);
+	exit();
+}
+if($role[0]!=1){
 	http_response_code(500);
 	exit();
 }

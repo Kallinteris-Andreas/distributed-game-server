@@ -18,6 +18,9 @@ if(isset($_GET['token'])&&isset($_GET['playId'])){
 }else{
 	exit(header("Location: index.php"));
 }
+if($role[0]!='1'){
+	exit(header("Location: index.php?token=".$_GET['token']));
+}
 $cq=curl_init();
 curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/getPlay');
 curl_setopt($cq,CURLOPT_POST,true);
@@ -62,11 +65,11 @@ if($gameinfoarr['player1']==$username){
 
  	<div class='menubar'>
  		<ul>
- 			<li><a href='home.php?token=<?php echo($_GET["token"]) ?>'>Home</a></li>
+ 			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
+ 			<li><a href='play.php?token=<?php echo($_GET["token"]) ?>'>Play</a></li>
+ 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>Tournaments</a></li>
+ 			<li><a href='allPlayers.php?token=<?php echo($_GET["token"]) ?>'>View all player scores</a></li>
  			<?php 
- 				if($role[1]=="1"){
- 					echo("<li><a href='official.php?token=".$_GET["token"]."'>Tournaments</a></li>");
- 				}
  				if($role[2]=="1"){
  					echo("<li><a href='admin.php?token=".$_GET["token"]."'>Administration</a></li>");
  				}
@@ -99,7 +102,9 @@ if($gameinfoarr['player1']==$username){
 					setTimeout(getPlayState,1000);
 				}
 				if(game.game_over() && game.turn()==='<?php echo($mycolor)?>'){
-					/////////////////////////TODO:inform game master its over
+					var ping=new XMLHttpRequest();
+					ping.open("GET",'funcs/gameFinished.php',true);
+					ping.send();
 				}
 			}
 		}
@@ -183,7 +188,7 @@ if($gameinfoarr['player1']==$username){
 	board = Chessboard('theBoard', config);
 	updateStatus(null);
 	if(!game.game_over() && game.turn()!=='<?php echo($mycolor)?>'){
-		setTimeout(getPlayState,1000);
+		setTimeout(getPlayState,700);
 	}
 	</script>
  </body>

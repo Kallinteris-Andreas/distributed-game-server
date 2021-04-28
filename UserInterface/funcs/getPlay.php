@@ -17,13 +17,17 @@ if(isset($_GET['token'])&&isset($_POST['gameType'])&&isset($_POST['playId'])){
 	}else{
 		$res=json_decode($response,true);
 		$username=$res['username'];
+		$role=$res['role'];
 	}
 	curl_close($cq);
 }else{
 	http_response_code(500);
 	exit();
 }
-
+if($role[0]!=1){
+	http_response_code(500);
+	exit();
+}
 $cq=curl_init();
 curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/getPlay');
 curl_setopt($cq,CURLOPT_POST,true);

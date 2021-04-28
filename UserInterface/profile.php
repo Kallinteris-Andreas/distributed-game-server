@@ -27,7 +27,6 @@ curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
 curl_setopt($cq,CURLOPT_RETURNTRANSFER,true);
 $res=json_decode(curl_exec($cq),true);
 curl_close($cq);
-
 ?>
 <html>
  <head>
@@ -37,9 +36,13 @@ curl_close($cq);
  <body>
  	<div class='menubar'>
  		<ul>
- 			<li><a href='home.php?token=<?php echo($_GET["token"]) ?>'>Home</a></li>
  			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
- 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>View tournaments</a></li>
+ 			<?php 
+ 				if($role[0]=="1"){
+ 					echo("<li><a href='play.php?token=".$_GET["token"]."'>Play</a></li>");
+ 				}
+ 			?>
+ 			<li><a href='tournaments.php?token=<?php echo($_GET["token"])?>'>Tournaments</a></li>
  			<li><a href='allPlayers.php?token=<?php echo($_GET["token"]) ?>'>View all player scores</a></li>
  			<?php 
  				if($role[2]=="1"){

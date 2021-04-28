@@ -1,6 +1,6 @@
 <?php 
-//params: token(GET)
-//returns: forwards result from playMaster/availPlays
+//GET params: token
+//returns: 200/500
 
 if(isset($_GET['token'])){
 	$cq=curl_init();
@@ -20,19 +20,22 @@ if(isset($_GET['token'])){
 	}
 	curl_close($cq);
 }else{
-	exit(header("Location: index.php"));
+	http_response_code(500);
+	exit();
 }
 if($role[0]!=1){
 	http_response_code(500);
 	exit();
 }
 $cq=curl_init();
-curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/availPlays');
+curl_setopt($cq,CURLOPT_URL,'http://gamemaster:8080/cancelNewPractice');
 curl_setopt($cq,CURLOPT_POST,true);
+curl_setopt($cq,CURLOPT_RETURNTRANSFER,true);
 curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
 $postValue=json_encode(array('username'=>$username));
 curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
-curl_exec($cq);
-curl_close($cq);
-
+$newPlayId=curl_exec($cq);
+if(curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){
+	http_response_code(500);
+}
 ?>

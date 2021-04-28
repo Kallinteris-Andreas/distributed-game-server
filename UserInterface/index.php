@@ -47,7 +47,7 @@ if (isset($_GET['token'])){
  					document.getElementById('errorspace').innerHTML='Wrong username or password.';
  					document.getElementById('btnlogin').disabled=false;
  				}else{
- 					window.location.replace("home.php?token="+this.responseText);
+ 					window.location.replace("profile.php?token="+this.responseText);
  				}
  			}
  		}

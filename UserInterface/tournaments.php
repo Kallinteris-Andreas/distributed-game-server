@@ -32,9 +32,13 @@ curl_close($cq);
  <body>
  	<div class='menubar'>
  		<ul>
- 			<li><a href='home.php?token=<?php echo($_GET["token"]) ?>'>Home</a></li>
  			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
- 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>View tournaments</a></li>
+ 			<?php 
+ 				if($role[0]=="1"){
+ 					echo("<li><a href='play.php?token=".$_GET["token"]."'>Play</a></li>");
+ 				}
+ 			?>
+ 			<li><a href='tournaments.php?token=<?php echo($_GET["token"]) ?>'>Tournaments</a></li>
  			<li><a href='allPlayers.php?token=<?php echo($_GET["token"]) ?>'>View all player scores</a></li>
  			<?php 
  				if($role[2]=="1"){
@@ -47,7 +51,10 @@ curl_close($cq);
 	<div class='mainpage'>
 		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><br><br>
 		<div>
-<?php
+<?php 
+if($role[1]=="1"){
+	echo("<input type='button' class='bigbtn' onclick='createTourn()' value='Create new tournament'/><br><br>");
+}
 if(count($res)==0){
 	echo('No tournaments yet');
 }else{
@@ -70,5 +77,30 @@ if(count($res)==0){
 }?>
 		</div>
 	</div>
+
+<?php if($role[1]=="1"){ ?>
+	<script>
+		function createTourn(){
+			var name=prompt('Enter name of tournament:');
+			if(name==null){
+				return;
+			}
+			req=new XMLHttpRequest();
+			req.onreadystatechange=function(){
+				if(this.readyState==4){
+					if(this.status!=200){
+						alert('Tournament could not be created: there is already a tournament with that name');
+					}else{
+						window.location.replace('tournaments.php?token=<?php echo($_GET["token"])?>');
+					}
+				}
+			}
+			req.open("POST",'funcs/createTournament.php?token=<?php echo($_GET["token"])?>',true);
+			req.setRequestHeader("Content-type", "application/json");
+			req.send('{"tournamentName":"'+name+'"}');
+		}
+	</script>
+<?php } ?>
+
 </body>
 </html>
