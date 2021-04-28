@@ -4,9 +4,18 @@ import auth_db
 
 class auth_handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        self.send_response(500)
-        self.end_headers()
-        self.wfile.write('Does not support GET requests'.encode())
+        if self.path.endswith('/listUsers'):
+            users = auth_db.list_users()
+            keys = ['username', 'role']
+            data = [dict(zip(keys, user)) for user in users]
+            response = json.dumps(data, indent=4)
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.end_headers()
+            self.wfile.write(response.encode("utf-8"))
+        else:
+            self.send_response(500)
+            self.end_headers()
     def do_POST(self):
         content_len = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_len)
@@ -64,15 +73,6 @@ class auth_handler(BaseHTTPRequestHandler):
             else:
                 self.send_response(500)
             self.end_headers()
-        elif self.path.endswith('/listUsers'):
-            users = auth_db.list_users()
-            keys = ['username', 'role']
-            data = [dict(zip(keys, user)) for user in users]
-            response = json.dumps(data, indent=4)
-            self.send_response(200)
-            self.send_header('Content-type','application/json')
-            self.end_headers()
-            self.wfile.write(response.encode("utf-8"))
         elif self.path.endswith('/logout'):
             token = (json_body['token'])
             if auth_db.logout(token):
