@@ -2,8 +2,6 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 import auth_db
 
-task_list = ['createUser', 'changePassword', 'login', 'validateToken']
-
 class auth_handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(500)
