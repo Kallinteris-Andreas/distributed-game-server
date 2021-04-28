@@ -123,3 +123,27 @@ Example output for /getAllPlayers:
 		"tournamentScore":21
 	}
 ]
+
+
+
+
+
+
+
+
+Mongo request for getting finished games:
+
+while(true){
+	var n=db.chessPlays.findOneAndDelete({isFinished:"T"},{projection:{gameState:0,_id:0,isFinished:0}})
+	if(n==null){
+		break;
+	}
+	//do sth with n
+}
+while(true){
+	var n=db.tttPlays.findOneAndDelete({isFinished:"T"},{projection:{gameState:0,_id:0,isFinished:0}})
+	if(n==null){
+		break;
+	}
+	//do sth with n
+}
