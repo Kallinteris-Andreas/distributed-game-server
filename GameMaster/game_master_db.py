@@ -1,5 +1,10 @@
 import sqlite3
 
+
+#Checks if the [name] is in the tournament Table
+def check_tournament(name):
+    c.execute("SELECT EXISTS(SELECT * FROM tournaments WHERE name=?)", (name,))
+    return c.fetchone()[0] != 0
 #get the current id Counter (aka how many matches have been started)
 def max_match_id():
     c.execute("SELECT seq FROM sqlite_sequence WHERE name='matches'")
@@ -70,6 +75,9 @@ def get_all_players_formated():
             "tournamentScore": get_n_tournament_wins(val[0])*3 + get_n_tournament_draws(val[0])
         }
     return player_list
+def finish_match(match_id):
+    c.execute("UPDATE matches set in_progress='false' where ID=?", (match_id,))
+    conn.commit()
 
 
 conn = sqlite3.connect("game_master.db")
@@ -92,6 +100,7 @@ def main():
     #print(get_all_plays_formated('tiki'))
     #print(get_players_list())
     #print(get_all_players_formated())
+    finish_match(17)
 
 
 if __name__ == '__main__':

@@ -2,15 +2,23 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 import game_master_db
 import json
 import requests
+import pymongo
+import game_master_mongo_interface
 
 practice_chess_waiting_list = None
 practice_ttt_waiting_list = None
 NO_TOURNAMENT = ''
 play_master_url = "http://127.0.0.1:8083/"
+auth_url = "http://127.0.0.1:8081/"
 
 class auth_handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        #if self.path.endswith('/gameFinished'):
+        if self.path.endswith('/gameFinished'):
+            finished_games = game_master_mongo_interface.extract_finished_games()
+            for game_id in finished_games:
+                game_master_db.finish_match(game_id)
+            self.send_response(200)
+            self.end_headers()
         #elif self.path.endswith('/getTournaments'):
         if self.path.endswith('/getAllPlayers'):
             response = json.dumps(game_master_db.get_all_players_formated(), indent=4)
@@ -23,7 +31,8 @@ class auth_handler(BaseHTTPRequestHandler):
         global practice_ttt_waiting_list
         content_len = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_len)
-        json_body = json.loads(post_body)
+        if content_len > 0:
+            json_body = json.loads(post_body)
         if self.path.endswith('/newPractice'):
             username = (json_body['username'])
             game_type = (json_body['gameType'])
@@ -93,7 +102,19 @@ class auth_handler(BaseHTTPRequestHandler):
             self.send_header('Content-type','application/json')
             self.end_headers()
             self.wfile.write(response.encode("utf-8"))
-        #elif self.path.endswith('/createTournaments'):
+        elif self.path.endswith('/createTournament'):
+            tournament_name = (json_body['tournamentName'])
+            if game_master_db.check_tournament(tournament_name):
+                self.send_response(500)
+                self.end_headers()
+            r = requests.get(url = auth_url + "listPlayers")
+            json_response = json.loads(r.text)
+            players_string = ''
+            for i in json_response:
+                #print(i["username"])
+                players_string += i["username"] + '\n'
+            players_string = players_string.rstrip()
+            print(players_string)
 
 def main():
     port = 6969

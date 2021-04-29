@@ -13,6 +13,15 @@ class auth_handler(BaseHTTPRequestHandler):
             self.send_header('Content-type','application/json')
             self.end_headers()
             self.wfile.write(response.encode("utf-8"))
+        elif self.path.endswith('/listPlayers'):
+            users = auth_db.list_players()
+            keys = ['username']
+            data = [dict(zip(keys, user)) for user in users]
+            response = json.dumps(data, indent=4)
+            self.send_response(200)
+            self.send_header('Content-type','application/json')
+            self.end_headers()
+            self.wfile.write(response.encode("utf-8"))
         else:
             self.send_response(500)
             self.end_headers()

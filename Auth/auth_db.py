@@ -69,6 +69,10 @@ def list_users():
     list = c.fetchall()
     return list
 
+def list_players():
+    c.execute("SELECT Username FROM users where substr(Role, 0, 2)='1'")
+    return c.fetchall()
+
 def db_unit_test():
     assert check_username("Andy") == True
     assert check_username("Invalid User Name") == False

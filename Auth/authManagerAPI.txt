@@ -18,6 +18,7 @@ validateToken - token - username,role / <blank> - 200 / 401(if invalid token)
 updateRole - username,newrole - <blank> - 200 
 listUsers - <nothing> - [{username,role},...] - 200
 logout - token - <blank> - 200
+listPlayers - <nothing> - [{username},...] - 200
 
 
 
