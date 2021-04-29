@@ -131,19 +131,11 @@ Example output for /getAllPlayers:
 
 
 
-Mongo request for getting finished games:
+Mongo request for getting one finished game (or null):
 
-while(true){
-	var n=db.chessPlays.findOneAndDelete({isFinished:"T"},{projection:{gameState:0,_id:0,isFinished:0}})
-	if(n==null){
-		break;
-	}
-	//do sth with n
+
+n=db.chessPlays.findOneAndDelete({isFinished:"T"},{projection:{gameState:0,_id:0,isFinished:0}})
+if(n==null){
+	n=db.tttPlays.findOneAndDelete({isFinished:"T"},{projection:{gameState:0,_id:0,isFinished:0}})
 }
-while(true){
-	var n=db.tttPlays.findOneAndDelete({isFinished:"T"},{projection:{gameState:0,_id:0,isFinished:0}})
-	if(n==null){
-		break;
-	}
-	//do sth with n
-}
+return n
