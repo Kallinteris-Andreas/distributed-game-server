@@ -101,7 +101,7 @@ def insert_tournament(tournament_name, game_type):
 
 #mark tourament with [tournament_name] as finished and store winners
 def finish_tournament(tournament_name, place0, place1, place2, place3):
-    c.execute("UPDATE tournaments SET place0=?, place1=?, place2=?, place3=?, finished=? WHERE name=?", (place0, place1, place2, place3, tournament_name,))
+    c.execute("UPDATE tournaments SET place0=?, place1=?, place2=?, place3=?, finished='true' WHERE name=?", (place0, place1, place2, place3, tournament_name,))
     conn.commit()
 
 #get a list of matches of [tournament_name]
@@ -131,7 +131,7 @@ def get_all_finished_tournaments_formated():
 
 #returns the winner of match with [match_id]
 def get_match_winner(match_id):
-    c.execute("SELECT winner FROM matches where ID = 20", (match_id,))
+    c.execute("SELECT winner FROM matches where ID = ?", (match_id,))
     return c.fetchone[0]
 
 
