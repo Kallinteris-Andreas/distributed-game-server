@@ -39,3 +39,12 @@
      ports:
        - "8083:8080"
      command: "node init.js"
+   gamemaster:
+     build:
+       context: ./GameMaster
+     volumes:
+       - "./GameMaster:/usr/src/app"
+     networks:
+       - mynetwork
+     ports:
+       - "8084:8080"
