@@ -24,7 +24,7 @@ def get_n_draws(username):
     c.execute("SELECT COUNT(*) FROM matches WHERE (player0=? OR player1=?) AND in_progress='false' AND winner=''", (username, username,))
     return c.fetchone()[0]
 def get_n_loses(username):
-    c.execute("SELECT COUNT(*) FROM matches WHERE (player0=? OR player1=?) AND in_progress='false' AND winner!='' AND winner!='tiki'", (username, username,))
+    c.execute("SELECT COUNT(*) FROM matches WHERE (player0=? OR player1=?) AND in_progress='false' AND winner!='' AND winner!=?", (username, username, username))
     return c.fetchone()[0]
 def get_n_tournament_wins(username):
     c.execute("SELECT COUNT(*) FROM matches WHERE (player0=? OR player1=?) AND in_progress='false' AND winner=? AND tournament!=''", (username, username, username,))
