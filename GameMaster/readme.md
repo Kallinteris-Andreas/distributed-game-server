@@ -3,7 +3,7 @@ This server is responsible for managing and organaizing matches (both practice a
 It is made out of ? components:
 
 ## game_master.db
-An SQLite3 dabatabase containing a 2 tables
+An SQLite3 dabatabase containing 2 tables
 ```
 CREATE TABLE "matches" (
 	"ID"	INTEGER NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE "tournaments" (
 	PRIMARY KEY("name")
 );
 ```
-SQLite3 was not chosen for any prarticular reason other than being already familized with it after implemented the auth service
+SQLite3 was not chosen for any prarticular reason other than being already familiar with it after implemented the auth service
 Note: you can access the the DB via gui with `sqlitebrowser game_master.db`
 
 ## game_master_db.py
