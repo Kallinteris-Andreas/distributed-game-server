@@ -9,4 +9,8 @@ The service is responsible all user and admin authention requests (uses tokens f
 
 ## PlayMaster Service
 
+## GameMaster Service
+This service is responsible for logging all the matches tournamets,
+matchmaking practice and tournaments matches
+
 ## UserInterface Service
