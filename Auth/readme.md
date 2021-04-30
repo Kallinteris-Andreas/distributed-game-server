@@ -1,5 +1,5 @@
 # Auth Server
-This server is responsible for the authentication service as descibed in `authManagerAPI.txt`
+This server is responsible for the authentication service as described in `authManagerAPI.txt`
 It is made out of 3 components:
 
 ## Auth.db
@@ -13,6 +13,7 @@ CREATE TABLE "users" (
 	PRIMARY KEY("Username")
 );
 ```
+SQLite3 was chosen due to it's simplicity (as simpler software tend to have less vurnabilities)
 Note: you can access the the DB via gui with `sqlitebrowser auth.db`
 
 ## Auth_db.py
@@ -42,5 +43,6 @@ POST /login({"username", "password"})
 POST /validateToken({"token"})
 POST /updateRole({"username", "role"})
 POST /listUsers()
+POST /listPlayers()
 POST /logout({"token"})
 ```

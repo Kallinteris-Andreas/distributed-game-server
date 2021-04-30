@@ -6,12 +6,12 @@ tournamentName is "" for practice plays
 Method - Url - Input as JSON - Output as JSON
 
 POST - /newPractice - username,gameType - playId
-POST - /cancelNewPractice - username - <nothing>
+POST - /cancelNewPractice - username,gameType - <nothing>
 GET - /gameFinished - <nothing> - <nothing>
 POST - /getMyScores - username - <see below>
 GET - /getTournaments - <nothing> - <see below>
 GET - /getAllPlayers - <nothing> - <see below>
-POST - /createTournament - tournamentName - <nothing> (500 response if tournament name is taken, else 200)
+POST - /createTournament - tournamentName, gameType - <nothing> (500 response if tournament name is taken, else 200)
 
 
 
