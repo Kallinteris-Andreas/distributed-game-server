@@ -1,6 +1,6 @@
 <?php 
 //GET params: token
-//POST params as JSON: tournamentName
+//POST params as JSON: tournamentName,gameType
 //returns: 200/500
 
 if(isset($_GET['token'])){
@@ -29,7 +29,7 @@ if($role[1]!=1){
 	exit();
 }
 $data = json_decode(file_get_contents('php://input'), true);
-if(!isset($data['tournamentName'])){
+if(!isset($data['tournamentName']||!isset($data['gameType']))){
 	http_response_code(500);
 	exit();
 }
@@ -37,7 +37,7 @@ $cq=curl_init();
 curl_setopt($cq,CURLOPT_URL,'http://gamemaster:8080/createTournament');
 curl_setopt($cq,CURLOPT_POST,true);
 curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
-$postValue=json_encode(array('tournamentName'=>$data['tournamentName']));
+$postValue=json_encode(array('tournamentName'=>$data['tournamentName'],'gameType'=>$data['gameType']));
 curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
 $success=curl_exec($cq);
 if(!$success || curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){

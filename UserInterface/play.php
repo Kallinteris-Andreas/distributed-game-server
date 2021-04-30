@@ -58,6 +58,7 @@ if($role[0]!='1'){
 	<script>
 		var req=null;
 		var animActive=false;
+		var gameTypeReq=null;
 		function practicePlay(gameType){
 			var link='chess';
 			if(gameType=='tictactoe'){
@@ -77,6 +78,7 @@ if($role[0]!='1'){
 			req.open("POST",'funcs/reqPractice.php?token=<?php echo($_GET["token"])?>',true);
 			req.setRequestHeader("Content-type", "application/json");
 			req.send('{"gameType":"'+gameType+'"}');
+			gameTypeReq=gameType;
 			if(!animActive){
 				setTimeout(loading,1000);
 			}
@@ -106,7 +108,7 @@ if($role[0]!='1'){
 					document.getElementById('btnT').style.display='initial';
 				}
 			};
-			req.open("GET",'funcs/cancelPractice.php?token=<?php echo($_GET["token"])?>',true);
+			req.open("GET",'funcs/cancelPractice.php?gameType='+gameTypeReq+'&token=<?php echo($_GET["token"])?>',true);
 			req.send();			
 		}
 		function goToGame(playId,gameType){

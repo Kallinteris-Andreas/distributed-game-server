@@ -52,9 +52,16 @@ curl_close($cq);
 		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><br><br>
 		<div>
 <?php 
-if($role[1]=="1"){
-	echo("<input type='button' class='bigbtn' onclick='createTourn()' value='Create new tournament'/><br><br>");
-}
+	if($role[1]=="1"){?>
+		Name: <input type='text' id='txtTournName'/> 
+		<div style='display:inline-block'>
+			<input type="radio" id="chessRadio" name="gType" checked=true>
+			<label for="chessRadio">Chess</label><br>
+			<input type="radio" id="tttRadio" name="gType">
+			<label for="tttRadio">Tic Tac Toe</label><br>
+		</div>		
+		<input type='button' class='bigbtn' onclick='createTourn()' value='Create new tournament'/><br><br>
+<?php } 
 if(count($res)==0){
 	echo('No tournaments yet');
 }else{
@@ -81,9 +88,14 @@ if(count($res)==0){
 <?php if($role[1]=="1"){ ?>
 	<script>
 		function createTourn(){
-			var name=prompt('Enter name of tournament:');
-			if(name==null){
+			var name=document.getElementById('txtTournName').value;
+			if(name==""){
+				alert('Name of tournament cannot be empty');
 				return;
+			}
+			let gameType='tictactoe';
+			if(document.getElementById('chessRadio').checked){
+				gameType='chess';
 			}
 			req=new XMLHttpRequest();
 			req.onreadystatechange=function(){
@@ -97,7 +109,7 @@ if(count($res)==0){
 			}
 			req.open("POST",'funcs/createTournament.php?token=<?php echo($_GET["token"])?>',true);
 			req.setRequestHeader("Content-type", "application/json");
-			req.send('{"tournamentName":"'+name+'"}');
+			req.send('{"tournamentName":"'+name+'","gameType":"'+gameType+'"}');
 		}
 	</script>
 <?php } ?>
