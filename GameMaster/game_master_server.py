@@ -52,6 +52,8 @@ def manage_tournament(tournament_name, game_type):
             remaining_matches_of_tourny[tournament_name].append(match_id)
         if len(remaining_players_of_tourny[tournament_name]) == 3 or len(remaining_players_of_tourny[tournament_name] == 4):
             semi_finals_player_list = remaining_players_of_tourny[tournament_name]
+        if len(remaining_players_of_tourny[tournament_name]) > 4:
+            quarter_finals_player_list = remaining_players_of_tourny[tournament_name]
         
         players_of_previous_round = remaining_players_of_tourny[tournament_name]
         if (len(remaining_players_of_tourny[tournament_name])%2 == 1):#if odd number of contesties left grant a bye to someone
@@ -72,6 +74,11 @@ def manage_tournament(tournament_name, game_type):
     place2 = semi_finals_player_list[0]
     if len(semi_finals_player_list) == 2:
         place3 = semi_finals_player_list[1]
+    else:
+        quarter_finals_player_list.remove(place0)
+        quarter_finals_player_list.remove(place1)
+        quarter_finals_player_list.remove(place2)
+        place3 = quarter_finals_player_list[0]
     
     game_master_db.finish_tournament(tournament_name, place0, place1, place2, place3)
     
