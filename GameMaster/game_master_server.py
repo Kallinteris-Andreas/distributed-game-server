@@ -3,6 +3,7 @@ import json
 import requests
 import time
 import threading
+import random
 import game_master_db
 import game_master_mongo_interface
 
@@ -41,14 +42,17 @@ def manage_tournament(tournament_name, game_type):
     #print(remaining_players_of_tourny[tournament_name])
 
     remaining_matches_of_tourny[tournament_name] = []
-    place1 = '' #TODO
     place2 = ''
-    place3 = ''
+    place3 = ''#TODO
     while len(remaining_players_of_tourny[tournament_name]) != 1:
+        #create matches for all the available players
+        random.shuffle(remaining_players_of_tourny[tournament_name])
         for i in range(0, int(len(remaining_players_of_tourny[tournament_name])/2)):
             match_id = create_play(game_type, remaining_players_of_tourny[tournament_name][i*2], remaining_players_of_tourny[tournament_name][(i*2)+1], tournament_name)
             remaining_matches_of_tourny[tournament_name].append(match_id)
-
+        if len(remaining_players_of_tourny[tournament_name]) == 3 or len(remaining_players_of_tourny[tournament_name] == 4):
+            semi_finals_player_list = remaining_players_of_tourny[tournament_name]
+        
         players_of_previous_round = remaining_players_of_tourny[tournament_name]
         if (len(remaining_players_of_tourny[tournament_name])%2 == 1):#if odd number of contesties left grant a bye to someone
             remaining_players_of_tourny[tournament_name] = [remaining_players_of_tourny[tournament_name].pop()]
@@ -56,11 +60,18 @@ def manage_tournament(tournament_name, game_type):
             remaining_players_of_tourny[tournament_name] = []
         
         while len(remaining_matches_of_tourny[tournament_name]) != 0: # wait till the matches all over
-            #print("tournament: " + tournament_name + " is waiting for all the matches to finish")
-            print("tournament: " + tournament_name + " is waiting for: " + str(len(remaining_matches_of_tourny[tournament_name])) +" matches to finish")
+            #print("tournament: " + tournament_name + " is waiting for: " + str(len(remaining_matches_of_tourny[tournament_name])) +" matches to finish")
             time.sleep(5) 
             
     place0 = remaining_players_of_tourny[tournament_name][0]
+    assert len(players_of_previous_round) == 2
+    players_of_previous_round.remove(place0)
+    place1 = players_of_previous_round[0]
+    semi_finals_player_list.remove(place0)
+    semi_finals_player_list.remove(place1)
+    place2 = semi_finals_player_list[0]
+    if len(semi_finals_player_list) == 2:
+        place3 = semi_finals_player_list[1]
     
     game_master_db.finish_tournament(tournament_name, place0, place1, place2, place3)
     
@@ -85,7 +96,7 @@ class game_master_handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
         elif self.path.endswith('/getTournaments'):
-            response = json.dumps(game_master_db.get_all_finished_tournaments_formated(), indent=4)
+            response = json.dumps(game_master_db.get_all_tournaments_formated(), indent=4)
             self.send_response(200)
             self.send_header('Content-type','application/json')
             self.end_headers()

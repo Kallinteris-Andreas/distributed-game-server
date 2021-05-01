@@ -95,6 +95,10 @@ def get_all_finished_tournaments():
     c.execute("SELECT * from tournaments WHERE finished='true'")
     return c.fetchall()
 
+def get_all_tournaments():
+    c.execute("SELECT * from tournaments")
+    return c.fetchall()
+
 def insert_tournament(tournament_name, game_type):
     c.execute("INSERT INTO tournaments(name, gameType) VALUES (?, ?)", (tournament_name, game_type))
     conn.commit()
@@ -106,25 +110,37 @@ def finish_tournament(tournament_name, place0, place1, place2, place3):
 
 #get a list of matches of [tournament_name]
 def get_all_tournament_matches(tournament_name):
-    c.execute("SELECT player1, player0 as player2, winner as score from matches WHERE tournament=?", (tournament_name,))
+    c.execute("SELECT player1, player0 as player2, winner, in_progress as score from matches WHERE tournament=?", (tournament_name,))
     return c.fetchall()
 
 #get a list of matches of [tournament_name], formated according to GET - /getTournaments
 def get_all_tournament_matches_formated(tournament_name):
-    keys = ['player1', 'player2', 'score']
+    keys = ['player1', 'player2', 'score', 'in_progress']
     data = [dict(zip(keys, match)) for match in get_all_tournament_matches(tournament_name)]
     for i in range(len(data)):
-        if data[i]['score'] == data[i]['player1']:
+        if data[i]['in_progress'] == 'true':
+            data[i]['score'] = "-"
+        elif data[i]['score'] == data[i]['player1']:
             data[i]['score'] = "3-0"
         elif data[i]['score'] == data[i]['player2']:
             data[i]['score'] = "0-3"
         else:
             data[i]['score'] = "1-1"
+        del data[i]['in_progress']
     return data
+
 #formated according to GET - /getTournaments
 def get_all_finished_tournaments_formated():
     keys = ['tournamentName', 'game_type', 'place1', 'place2', 'place3', 'place4']
     data = [dict(zip(keys, tourny)) for tourny in get_all_finished_tournaments()]
+    for i in range(len(data)):
+        data[i]['plays'] = get_all_tournament_matches_formated(data[i]['tournamentName'])
+    return data
+
+#formated according to GET - /getTournaments
+def get_all_tournaments_formated():
+    keys = ['tournamentName', 'game_type', 'place1', 'place2', 'place3', 'place4']
+    data = [dict(zip(keys, tourny)) for tourny in get_all_tournaments()]
     for i in range(len(data)):
         data[i]['plays'] = get_all_tournament_matches_formated(data[i]['tournamentName'])
     return data
@@ -159,7 +175,7 @@ def main():
     #print(get_all_finished_tournaments())
     #insert_tournament('test', 'chess')
     #print(get_all_tournament_matches('test'))
-    #print(get_all_tournament_matches_formated('test'))
+    print(get_all_tournament_matches_formated('test'))
     #print(get_all_finished_tournaments_formated())
 
 
