@@ -118,10 +118,13 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(response.encode("utf-8"))
                 elif practice_chess_waiting_list == username:
-                    self.send_response(500)
-                    self.send_header('Content-type','text/txt')
+                    while practice_chess_waiting_list != None:
+                        pass
+                    response = json.dumps({"playId": practice_chess_match_queue_id}, indent=4)
+                    self.send_response(200)
+                    self.send_header('Content-type','application/json')
                     self.end_headers()
-                    self.wfile.write('you are already Queuing'.encode("utf-8"))
+                    self.wfile.write(response.encode("utf-8"))
                 else:
                     username1 = practice_chess_waiting_list
                     match_id = create_play(game_type, username, username1, NO_TOURNAMENT)
@@ -143,10 +146,13 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(response.encode("utf-8"))
                 elif practice_ttt_waiting_list == username:
-                    self.send_response(500)
-                    self.send_header('Content-type','text/txt')
+                    while practice_ttt_waiting_list != None:
+                        pass
+                    response = json.dumps({"playId": practice_ttt_match_queue_id}, indent=4)
+                    self.send_response(200)
+                    self.send_header('Content-type','application/json')
                     self.end_headers()
-                    self.wfile.write('you are already Queuing'.encode("utf-8"))
+                    self.wfile.write(response.encode("utf-8"))
                 else:
                     username1 = practice_ttt_waiting_list
                     practice_ttt_waiting_list = None
