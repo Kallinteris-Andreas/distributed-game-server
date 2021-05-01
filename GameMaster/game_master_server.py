@@ -141,7 +141,7 @@ class game_master_handler(BaseHTTPRequestHandler):
             elif game_type == 'tictactoe':
                 if practice_ttt_waiting_list == username:
                     practice_ttt_waiting_list = None
-            else 
+            else:
                 self.send_response(500)
                 self.end_headers()
                 return
@@ -176,7 +176,7 @@ class game_master_handler(BaseHTTPRequestHandler):
 
 
 def main():
-    port = 6969
+    port = 8080
     server = HTTPServer(('', port ), game_master_handler)
     print('Game Master Server running on port: ' + str(port))
     server.serve_forever()
