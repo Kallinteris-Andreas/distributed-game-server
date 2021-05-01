@@ -8,6 +8,8 @@ import game_master_mongo_interface
 
 practice_chess_waiting_list = None
 practice_ttt_waiting_list = None
+practice_chess_match_queue_id = None
+practice_ttt_match_queue_id = None
 NO_TOURNAMENT = ''
 play_master_url = "http://127.0.0.1:8083/"
 auth_url = "http://127.0.0.1:8081/"
@@ -15,7 +17,7 @@ auth_url = "http://127.0.0.1:8081/"
 def create_play(game_type, username0, username1, tournament_name):
     game_master_db.create_match(game_type, username0, username1, tournament_name)
     match_id = game_master_db.max_match_id()
-    data = {'playId': match_id, 'player1': username0, "player2": username1, "gameType": game_type, "tournamentName" : ""}
+    data = {'playId': match_id, 'player1': username0, "player2": username1, "gameType": game_type, "tournamentName" : tournament_name}
     json_data = json.dumps(data, indent = 4)
     r = requests.post(url = play_master_url + "createPlay", data = json_data)
     while not r.ok:
@@ -96,6 +98,8 @@ class game_master_handler(BaseHTTPRequestHandler):
     def do_POST(self):
         global practice_chess_waiting_list
         global practice_ttt_waiting_list
+        global practice_chess_match_queue_id
+        global practice_ttt_match_queue_id
         content_len = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_len)
         if content_len > 0:
@@ -106,31 +110,52 @@ class game_master_handler(BaseHTTPRequestHandler):
             if game_type == "chess":
                 if practice_chess_waiting_list == None:
                     practice_chess_waiting_list = username
+                    while practice_chess_waiting_list != None:
+                        pass
+                    response = json.dumps({"playId": practice_chess_match_queue_id}, indent=4)
                     self.send_response(200)
+                    self.send_header('Content-type','application/json')
                     self.end_headers()
+                    self.wfile.write(response.encode("utf-8"))
                 elif practice_chess_waiting_list == username:
-                    self.send_response(200)
+                    self.send_response(500)
+                    self.send_header('Content-type','text/txt')
                     self.end_headers()
+                    self.wfile.write('you are already Queuing'.encode("utf-8"))
                 else:
                     username1 = practice_chess_waiting_list
+                    match_id = create_play(game_type, username, username1, NO_TOURNAMENT)
+                    practice_chess_match_queue_id = match_id
                     practice_chess_waiting_list = None
-                    create_play(game_type, username, username1, NO_TOURNAMENT)
+                    response = json.dumps({"playId": match_id}, indent=4)
                     self.send_response(200)
+                    self.send_header('Content-type','application/json')
                     self.end_headers()
+                    self.wfile.write(response.encode("utf-8"))
             elif game_type == "tictactoe":
                 if practice_ttt_waiting_list == None:
                     practice_ttt_waiting_list = username
+                    while practice_ttt_waiting_list != None:
+                        pass
+                    response = json.dumps({"playId": practice_ttt_match_queue_id}, indent=4)
                     self.send_response(200)
+                    self.send_header('Content-type','application/json')
                     self.end_headers()
+                    self.wfile.write(response.encode("utf-8"))
                 elif practice_ttt_waiting_list == username:
-                    self.send_response(200)
+                    self.send_response(500)
+                    self.send_header('Content-type','text/txt')
                     self.end_headers()
+                    self.wfile.write('you are already Queuing'.encode("utf-8"))
                 else:
                     username1 = practice_ttt_waiting_list
                     practice_ttt_waiting_list = None
-                    create_play(game_type, username, username1, NO_TOURNAMENT)
+                    match_id = create_play(game_type, username, username1, NO_TOURNAMENT)
+                    response = json.dumps({"playId": match_id}, indent=4)
                     self.send_response(200)
+                    self.send_header('Content-type','application/json')
                     self.end_headers()
+                    self.wfile.write(response.encode("utf-8"))
             else:
                 self.send_response(500)
                 self.end_headers()
