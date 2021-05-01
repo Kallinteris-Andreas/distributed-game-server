@@ -71,12 +71,14 @@ class game_master_handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path.endswith('/gameFinished'):
             finished_games = game_master_mongo_interface.extract_finished_games()
-            for game_id in finished_games:
-                game_master_db.finish_match(game_id)
+            for game in finished_games:
+                game_master_db.finish_match(game[0], game[1])
                 for tournament_name in remaining_matches_of_tourny:#handle case of tournament match
-                    if game_id in remaining_matches_of_tourny[tournament_name]:
-                        remaining_matches_of_tourny[tournament_name].remove(game_id)
-                        remaining_players_of_tourny[tournament_name].append(game_master_db.get_match_winner(game_id))
+                    if game[0] in remaining_matches_of_tourny[tournament_name]:
+                        remaining_matches_of_tourny[tournament_name].remove(game[0])
+                        if game[1] != '':
+                            remaining_players_of_tourny[tournament_name].append(game[1])
+                            #TODO? what about draws
             self.send_response(200)
             self.end_headers()
         elif self.path.endswith('/getTournaments'):

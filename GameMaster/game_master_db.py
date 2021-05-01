@@ -87,10 +87,10 @@ def get_all_players_formated():
     return player_list
 
 #mark match with [match_id] as finished
-def finish_match(match_id):
-    c.execute("UPDATE matches set in_progress='false' where ID=?", (match_id,))
+def finish_match(match_id, winner):
+    c.execute("UPDATE matches set winner=?, in_progress='false' where ID=?", (winner, match_id,))
     conn.commit()
-    
+
 def get_all_finished_tournaments():
     c.execute("SELECT * from tournaments WHERE finished='true'")
     return c.fetchall()
