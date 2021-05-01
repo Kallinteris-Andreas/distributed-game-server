@@ -13,8 +13,8 @@ def max_match_id():
 
 #log the creating of a match in our DB
 def create_match(game_type, player0, player1, tournament):
-        c.execute("INSERT INTO matches (gameType, player0, player1, winner, tournament) VALUES (?, ?, ?, '', ?)", (game_type, player0, player1, tournament,))
-        conn.commit()
+    c.execute("INSERT INTO matches (gameType, player0, player1, winner, tournament) VALUES (?, ?, ?, '', ?)", (game_type, player0, player1, tournament,))
+    conn.commit()
 
 #get the number of plays/wins/draws/loses of [username] for {any/tournament/practice play}
 def get_n_wins(username):
@@ -116,17 +116,17 @@ def get_all_tournament_matches_formated(tournament_name):
     for i in range(len(data)):
         if data[i]['score'] == data[i]['player1']:
             data[i]['score'] = "3-0"
-        elif data[i]['score'] == data[i]['player1']:
+        elif data[i]['score'] == data[i]['player2']:
             data[i]['score'] = "0-3"
         else:
             data[i]['score'] = "1-1"
     return data
 #formated according to GET - /getTournaments
 def get_all_finished_tournaments_formated():
-    keys = ['name', 'game_type', 'place1', 'place2', 'place3', 'place4']
+    keys = ['tournamentName', 'game_type', 'place1', 'place2', 'place3', 'place4']
     data = [dict(zip(keys, tourny)) for tourny in get_all_finished_tournaments()]
     for i in range(len(data)):
-        data[i]['plays'] = get_all_tournament_matches_formated(data[i]['name'])
+        data[i]['plays'] = get_all_tournament_matches_formated(data[i]['tournamentName'])
     return data
 
 #returns the winner of match with [match_id]

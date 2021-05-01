@@ -46,7 +46,7 @@ def manage_tournament(tournament_name, game_type):
     place3 = ''
     while len(remaining_players_of_tourny[tournament_name]) != 1:
         for i in range(0, int(len(remaining_players_of_tourny[tournament_name])/2)):
-            match_id = create_play(game_type, remaining_players_of_tourny[tournament_name][i], remaining_players_of_tourny[tournament_name][i+1], tournament_name)
+            match_id = create_play(game_type, remaining_players_of_tourny[tournament_name][i*2], remaining_players_of_tourny[tournament_name][(i*2)+1], tournament_name)
             remaining_matches_of_tourny[tournament_name].append(match_id)
 
         players_of_previous_round = remaining_players_of_tourny[tournament_name]
@@ -55,9 +55,10 @@ def manage_tournament(tournament_name, game_type):
         else:
             remaining_players_of_tourny[tournament_name] = []
         
-        while len(remaining_matches_of_tourny) != 0: # wait till the matches all over
+        while len(remaining_matches_of_tourny[tournament_name]) != 0: # wait till the matches all over
             #print("tournament: " + tournament_name + " is waiting for all the matches to finish")
-            time.sleep(5)
+            print("tournament: " + tournament_name + " is waiting for: " + str(len(remaining_matches_of_tourny[tournament_name])) +" matches to finish")
+            time.sleep(5) 
             
     place0 = remaining_players_of_tourny[tournament_name][0]
     
