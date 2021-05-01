@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-URL = "mongodb://127.0.0.1:8082"
+URL = "mongodb://mongo:27017"
 client = MongoClient(URL)
 db = client.Plays
 
