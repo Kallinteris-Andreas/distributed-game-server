@@ -29,7 +29,7 @@ if($role[1]!=1){
 	exit();
 }
 $data = json_decode(file_get_contents('php://input'), true);
-if(!isset($data['tournamentName']||!isset($data['gameType']))){
+if(!isset($data['tournamentName'])||!isset($data['gameType'])){
 	http_response_code(500);
 	exit();
 }
@@ -40,7 +40,7 @@ curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
 $postValue=json_encode(array('tournamentName'=>$data['tournamentName'],'gameType'=>$data['gameType']));
 curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
 $success=curl_exec($cq);
-if(!$success || curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){
+if($success===false || curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){
 	http_response_code(500);
 }
 curl_close($cq);

@@ -11,8 +11,8 @@ practice_ttt_waiting_list = None
 practice_chess_match_queue_id = None
 practice_ttt_match_queue_id = None
 NO_TOURNAMENT = ''
-play_master_url = "http://127.0.0.1:8083/"
-auth_url = "http://127.0.0.1:8081/"
+play_master_url = "http://playmaster:8080/"
+auth_url = "http://authmanager:42069/"
 
 def create_play(game_type, username0, username1, tournament_name):
     game_master_db.create_match(game_type, username0, username1, tournament_name)
