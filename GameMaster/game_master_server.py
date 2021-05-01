@@ -157,7 +157,7 @@ class game_master_handler(BaseHTTPRequestHandler):
             draws = game_master_db.get_n_draws(username)
             loses = game_master_db.get_n_loses(username)
             plays = game_master_db.get_all_plays_formated(username)
-            response = json.dumps({"practiceScore":practice_score, "practicePlaysNum":practice_plays_num, "tournamentScore":tournament_score, "tournamentPlaysNum": tournament_plays_num, "wins": wins, "ties": draws, "loses": loses, "plays": plays}, indent=4)
+            response = json.dumps({"practiceScore":practice_score, "practicePlaysNum":practice_plays_num, "tournamentScore":tournament_score, "tournamentPlaysNum": tournament_plays_num, "wins": wins, "ties": draws, "losses": loses, "plays": plays}, indent=4)
             self.send_response(200)
             self.send_header('Content-type','application/json')
             self.end_headers()
