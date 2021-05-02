@@ -1,4 +1,5 @@
 import sqlite3
+import copy
 
 
 #Checks if the [name] is in the tournament Table
@@ -75,14 +76,13 @@ def get_players_list():
         SELECT player1 as player FROM matches
         """)
     return c.fetchall()
-#get a list of the players that have playied a match (even not finished) formated according to GET - /getAllPlayers
-def get_all_players_formated():
-    player_list = get_players_list()
+#get a list of the players that are on the [player_list] formated according to GET - /getAllPlayers
+def get_all_players_formated(player_list):
     for i, val in enumerate(player_list):
         player_list[i] = {
-            "username": val[0],
-            "practiceScore": get_n_practice_wins(val[0])*3 + get_n_practice_draws(val[0]),
-            "tournamentScore": get_n_tournament_wins(val[0])*3 + get_n_tournament_draws(val[0])
+            "username": val['username'],
+            "practiceScore": get_n_practice_wins(val['username'])*3 + get_n_practice_draws(val['username']),
+            "tournamentScore": get_n_tournament_wins(val['username'])*3 + get_n_tournament_draws(val['username'])
         }
     return player_list
 

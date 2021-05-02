@@ -5,6 +5,7 @@ import requests
 import time
 import threading
 import random
+import copy
 import game_master_db
 import game_master_mongo_interface
 
@@ -43,23 +44,29 @@ def manage_tournament(tournament_name, game_type):
     remaining_players_of_tourny[tournament_name] = []
     for i in list_of_players():
         remaining_players_of_tourny[tournament_name].append(i['username'])
-    #print("starting tournament with:"
-    #print(remaining_players_of_tourny[tournament_name])
+    number_of_players = len(remaining_players_of_tourny[tournament_name])
+    print("starting tournament with:")
+    print(remaining_players_of_tourny[tournament_name], flush=True)
 
+    place1 = ''
+    place2 = ''
+    place3 = ''
     remaining_matches_of_tourny[tournament_name] = []
     while len(remaining_players_of_tourny[tournament_name]) != 1:
         #create matches for all the available players
+        
         #print("pre" + str(remaining_players_of_tourny[tournament_name]))
-        #random.shuffle(remaining_players_of_tourny[tournament_name])
+        random.shuffle(remaining_players_of_tourny[tournament_name])
         #print("post" + str(remaining_players_of_tourny[tournament_name]))
         assert isinstance(remaining_players_of_tourny[tournament_name], list)
         for i in range(0, int(len(remaining_players_of_tourny[tournament_name])/2)):
             match_id = create_play(game_type, remaining_players_of_tourny[tournament_name][i*2], remaining_players_of_tourny[tournament_name][(i*2)+1], tournament_name)
             remaining_matches_of_tourny[tournament_name].append(match_id)
         if len(remaining_players_of_tourny[tournament_name]) == 3 or len(remaining_players_of_tourny[tournament_name]) == 4:
-            semi_finals_player_list = remaining_players_of_tourny[tournament_name]
+            semi_finals_player_list = copy.deepcopy(remaining_players_of_tourny[tournament_name])
+            assert len(semi_finals_player_list) > 2
         if len(remaining_players_of_tourny[tournament_name]) > 4:
-            quarter_finals_player_list = remaining_players_of_tourny[tournament_name]
+            quarter_finals_player_list = copy.deepcopy(remaining_players_of_tourny[tournament_name])
         assert isinstance(remaining_players_of_tourny[tournament_name], list)
         
         players_of_previous_round = remaining_players_of_tourny[tournament_name]
@@ -69,23 +76,28 @@ def manage_tournament(tournament_name, game_type):
             remaining_players_of_tourny[tournament_name] = []
         
         while len(remaining_matches_of_tourny[tournament_name]) != 0: # wait till the matches all over
-            #print("tournament: " + tournament_name + " is waiting for: " + str(len(remaining_matches_of_tourny[tournament_name])) +" matches to finish")
+            print("tournament: " + tournament_name + " is waiting for: " + str(len(remaining_matches_of_tourny[tournament_name])) +" matches to finish", flush=True)
             time.sleep(5) 
             
     place0 = remaining_players_of_tourny[tournament_name][0]
     assert len(players_of_previous_round) == 2
-    players_of_previous_round.remove(place0)
-    place1 = players_of_previous_round[0]
-    semi_finals_player_list.remove(place0)
-    semi_finals_player_list.remove(place1)
-    place2 = semi_finals_player_list[0]
-    if len(semi_finals_player_list) == 2:
-        place3 = semi_finals_player_list[1]
-    else:
-        quarter_finals_player_list.remove(place0)
-        quarter_finals_player_list.remove(place1)
-        quarter_finals_player_list.remove(place2)
-        place3 = quarter_finals_player_list[0]
+    if number_of_players > 1:
+        players_of_previous_round.remove(place0)
+        place1 = players_of_previous_round[0]
+    if number_of_players > 2:
+        print(semi_finals_player_list, flush=True)
+        assert len(semi_finals_player_list) > 2
+        semi_finals_player_list.remove(place0)
+        semi_finals_player_list.remove(place1)
+        place2 = semi_finals_player_list[0]
+    if number_of_players > 3:
+        if len(semi_finals_player_list) == 2:
+            place3 = semi_finals_player_list[1]
+        else:
+            quarter_finals_player_list.remove(place0)
+            quarter_finals_player_list.remove(place1)
+            quarter_finals_player_list.remove(place2)
+            place3 = quarter_finals_player_list[0]
     
     db_lock.acquire()
     game_master_db.finish_tournament(tournament_name, place0, place1, place2, place3)
@@ -122,8 +134,9 @@ class game_master_handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(response.encode("utf-8"))
         if self.path.endswith('/getAllPlayers'):
+            l = list_of_players()
             db_lock.acquire()
-            response = json.dumps(game_master_db.get_all_players_formated(), indent=4)
+            response = json.dumps(game_master_db.get_all_players_formated(l), indent=4)
             db_lock.release()
             self.send_response(200)
             self.send_header('Content-type','application/json')
