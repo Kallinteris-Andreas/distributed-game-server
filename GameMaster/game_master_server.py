@@ -11,6 +11,8 @@ import game_master_mongo_interface
 
 db_lock = threading.Lock()
 
+GAMES_LIST = ['chess', 'tictactoe']
+
 practice_chess_waiting_list = None
 practice_ttt_waiting_list = None
 practice_chess_match_queue_id = None
@@ -52,7 +54,7 @@ def manage_tournament(tournament_name, game_type):
     place2 = ''
     place3 = ''
     remaining_matches_of_tourny[tournament_name] = []
-    while len(remaining_players_of_tourny[tournament_name]) != 1:
+    while len(remaining_players_of_tourny[tournament_name]) >= 0:
         #create matches for all the available players
         
         #print("pre" + str(remaining_players_of_tourny[tournament_name]))
@@ -154,6 +156,10 @@ class game_master_handler(BaseHTTPRequestHandler):
         if self.path.endswith('/newPractice'):
             username = (json_body['username'])
             game_type = (json_body['gameType'])
+            if not game_type in GAMES_LIST:
+                self.send_response(500)
+                self.end_headers()
+                return
             if game_type == "chess":
                 if practice_chess_waiting_list == None:
                     practice_chess_waiting_list = username
@@ -214,12 +220,13 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.send_header('Content-type','application/json')
                     self.end_headers()
                     self.wfile.write(response.encode("utf-8"))
-            else:
-                self.send_response(500)
-                self.end_headers()
         elif self.path.endswith('/cancelNewPractice'):
             username = (json_body['username'])
             game_type = (json_body['gameType'])
+            if not game_type in GAMES_LIST:
+                self.send_response(500)
+                self.end_headers()
+                return
             if game_type == 'chess':
                 if practice_chess_waiting_list == username:
                     practice_chess_waiting_list = None
@@ -252,6 +259,10 @@ class game_master_handler(BaseHTTPRequestHandler):
         elif self.path.endswith('/createTournament'):
             tournament_name = (json_body['tournamentName'])
             game_type = (json_body['gameType'])
+            if not game_type in GAMES_LIST:
+                self.send_response(500)
+                self.end_headers()
+                return
             db_lock.acquire()
             if game_master_db.check_tournament(tournament_name):
                 self.send_response(500)
