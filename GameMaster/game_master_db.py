@@ -46,27 +46,30 @@ def get_n_practice_plays(username):
     c.execute("SELECT COUNT(*) FROM matches WHERE (player0=? OR player1=?) AND in_progress='false' AND tournament=''", (username, username,))
     return c.fetchone()[0]
 
-#get a list of all the matches the [username] has finished 
+#get a list of all the matches the [username]
 def get_all_plays(username):
     c.execute("""
-        SELECT gameType, player0 as other_player, winner, tournament FROM matches WHERE player1=? AND in_progress='false'
+        SELECT gameType, player0 as other_player, winner, tournament, in_progress FROM matches WHERE player1=?
         UNION ALL
-        SELECT gameType, player1 as other_player, winner, tournament FROM matches WHERE player0=? AND in_progress='false'
+        SELECT gameType, player1 as other_player, winner, tournament, in_progress FROM matches WHERE player0=?
             """, (username, username,))
     return c.fetchall()
 
 #get a list of all the matches the [username] has finished formated according to POST - /getMyScores 
 def get_all_plays_formated(username):
         plays = get_all_plays(username)
-        keys = ['gameType', 'opponent', 'score','tournamentName']
+        keys = ['gameType', 'opponent', 'score','tournamentName', 'in_progress']
         data = [dict(zip(keys, play)) for play in plays]
         for i in data:
-            if i["score"] == username:
+            if i['in_progress'] == 'true':
+                i["score"] = '-'
+            elif i["score"] == username:
                 i["score"] = 3
             elif i["score"] == '':
                 i["score"] = 1
             else:
                 i["score"] = 0
+            del i['in_progress']
         return data
 #get a list of the players that have playied a match (even not finished), Note auth.db has a complete list of players
 def get_players_list():
