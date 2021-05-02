@@ -215,6 +215,11 @@ http.createServer( function (req,res){
 			  		collName='tttPlays';
 			  		initGameState='NNNNNNNNNX';
 			  	}
+			  	if(Math.floor(Math.random() * 2) == 0){
+			  		var tmp=postData.player1;
+			  		postData.player1=postData.player2;
+			  		postData.player2=tmp;
+			  	}
 			  	dbPlays.collection(collName).find({playId:postData.playId}).count(function(err,num){
 			  		if(err!=null){
 			  			throw err;
