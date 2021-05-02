@@ -82,7 +82,8 @@ if($gameinfoarr['player1']==$username){
 		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><p><p>
 		Playing against <?php echo($opponent)?><p>
 		<div><div id='theBoard' class='chessdiv'></div></div>
-		<div id='statusdiv'></div>
+		<br><br>
+		<div id='statusdiv' style='text-align: center;'></div>
 	</div>
 	<script>
 	var board = null;

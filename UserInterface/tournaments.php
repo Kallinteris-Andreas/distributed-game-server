@@ -60,14 +60,20 @@ curl_close($cq);
 			<input type="radio" id="tttRadio" name="gType">
 			<label for="tttRadio">Tic Tac Toe</label><br>
 		</div>		
-		<input type='button' class='bigbtn' onclick='createTourn()' value='Create new tournament'/><br><br>
+		<input type='button' id='btncreate' class='bigbtn' onclick='createTourn()' value='Create new tournament'/><br><br>
 <?php } 
 if(count($res)==0){
 	echo('No tournaments yet');
 }else{
 	echo('<table>');
 	for($i=0;$i<count($res);$i++){
-		echo('<tr><td><h4>'.$res[$i]['tournamentName'].'</h4></td>');
+		echo('<tr><td><h4>'.$res[$i]['tournamentName'].'<br></h4>( ');
+		if($res[$i]['game_type']=='chess'){
+			echo('Chess');
+		}else if($res[$i]['game_type']=='tictactoe'){
+			echo('Tic Tac Toe');
+		}
+		echo(' )</td>');
 		echo('<td>1st place: '.$res[$i]['place1'].'<br>2nd place: '.$res[$i]['place2'].'<br>3rd place: '.$res[$i]['place3'].'<br>4th place: '.$res[$i]['place4']);
 		echo('</td></tr><tr><td class=noborder >');
 		$playarr=$res[$i]['plays'];
@@ -97,13 +103,17 @@ if(count($res)==0){
 			if(document.getElementById('chessRadio').checked){
 				gameType='chess';
 			}
+			document.getElementById('btncreate').disabled=true;
 			req=new XMLHttpRequest();
 			req.onreadystatechange=function(){
 				if(this.readyState==4){
 					if(this.status!=200){
 						alert('Tournament could not be created: there is already a tournament with that name');
+						document.getElementById('btncreate').disabled=false;
 					}else{
-						window.location.replace('tournaments.php?token=<?php echo($_GET["token"])?>');
+						setTimeout(function(){
+										window.location.replace('tournaments.php?token=<?php echo($_GET["token"])?>');
+									},1000);
 					}
 				}
 			}
