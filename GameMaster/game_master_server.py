@@ -54,7 +54,7 @@ def manage_tournament(tournament_name, game_type):
     place2 = ''
     place3 = ''
     remaining_matches_of_tourny[tournament_name] = []
-    while len(remaining_players_of_tourny[tournament_name]) >= 0:
+    while len(remaining_players_of_tourny[tournament_name]) > 1:
         #create matches for all the available players
         
         #print("pre" + str(remaining_players_of_tourny[tournament_name]))
@@ -116,15 +116,20 @@ class game_master_handler(BaseHTTPRequestHandler):
         if self.path.endswith('/gameFinished'):
             finished_games = game_master_mongo_interface.extract_finished_games()
             for game in finished_games:
+                print("finishing game: " + str(game), flush=True)
+                match_id = game[0]
+                winner = game[1]
                 db_lock.acquire()
-                game_master_db.finish_match(game[0], game[1])
+                game_master_db.finish_match(match_id, winner)
                 db_lock.release()
                 for tournament_name in remaining_matches_of_tourny:#handle case of tournament match
-                    if game[0] in remaining_matches_of_tourny[tournament_name]:
-                        remaining_matches_of_tourny[tournament_name].remove(game[0])
-                        if game[1] != '':
-                            remaining_players_of_tourny[tournament_name].append(game[1])
-                            #TODO? what about draws
+                    if match_id in remaining_matches_of_tourny[tournament_name]:
+                        remaining_matches_of_tourny[tournament_name].remove(match_id)
+                        if winner != '': #if there is a winner
+                            remaining_players_of_tourny[tournament_name].append(winner)
+                        else: #in case of a draw
+                            remaining_players_of_tourny[tournament_name].append(game[2])
+                            remaining_players_of_tourny[tournament_name].append(game[3])
             self.send_response(200)
             self.end_headers()
         elif self.path.endswith('/getTournaments'):
@@ -164,7 +169,6 @@ class game_master_handler(BaseHTTPRequestHandler):
                 if practice_chess_waiting_list == None:
                     practice_chess_waiting_list = username
                     while practice_chess_waiting_list != None:
-                        print("Waiting")
                         time.sleep(2) 
                     response = json.dumps({"playId": practice_chess_match_queue_id}, indent=4)
                     self.send_response(200)
@@ -173,7 +177,6 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.wfile.write(response.encode("utf-8"))
                 elif practice_chess_waiting_list == username:
                     while practice_chess_waiting_list != None:
-                        print("Waiting")
                         time.sleep(2) 
                     response = json.dumps({"playId": practice_chess_match_queue_id}, indent=4)
                     self.send_response(200)
@@ -194,7 +197,6 @@ class game_master_handler(BaseHTTPRequestHandler):
                 if practice_ttt_waiting_list == None:
                     practice_ttt_waiting_list = username
                     while practice_ttt_waiting_list != None:
-                        print("Waiting")
                         time.sleep(2) 
                     response = json.dumps({"playId": practice_ttt_match_queue_id}, indent=4)
                     self.send_response(200)
@@ -203,7 +205,6 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.wfile.write(response.encode("utf-8"))
                 elif practice_ttt_waiting_list == username:
                     while practice_ttt_waiting_list != None:
-                        print("Waiting")
                         time.sleep(2) 
                     response = json.dumps({"playId": practice_ttt_match_queue_id}, indent=4)
                     self.send_response(200)
