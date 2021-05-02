@@ -253,7 +253,7 @@ class game_master_handler(BaseHTTPRequestHandler):
 
 
 def main():
-    port = 8084
+    port = 8080
     #server = HTTPServer(('', port ), game_master_handler)
     server = ThreadingHTTPServer(('', port ), game_master_handler)
     print('Game Master Server running on port: ' + str(port))
