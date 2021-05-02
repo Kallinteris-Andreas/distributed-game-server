@@ -85,11 +85,11 @@ if($role[0]!='1'){
 			animActive=true;
 		}
 		function loading(){
+			let txt=document.getElementById('txtLoading');
 			if(txt.style.display=='none'){
 				animActive=false;
 				return;
 			}
-			let txt=document.getElementById('txtLoading');
 			if(txt.innerHTML.endsWith("...")){
 				txt.innerHTML='Searching for second player...   ';
 			}else{
