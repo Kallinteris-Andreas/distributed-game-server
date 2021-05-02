@@ -67,7 +67,7 @@ def manage_tournament(tournament_name, game_type):
         if len(remaining_players_of_tourny[tournament_name]) == 3 or len(remaining_players_of_tourny[tournament_name]) == 4:
             semi_finals_player_list = copy.deepcopy(remaining_players_of_tourny[tournament_name])
             assert len(semi_finals_player_list) > 2
-        if len(remaining_players_of_tourny[tournament_name]) > 4:
+        if len(remaining_players_of_tourny[tournament_name]) > 3:
             quarter_finals_player_list = copy.deepcopy(remaining_players_of_tourny[tournament_name])
         assert isinstance(remaining_players_of_tourny[tournament_name], list)
         
