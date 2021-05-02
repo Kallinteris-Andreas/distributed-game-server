@@ -47,4 +47,4 @@
      networks:
        - mynetwork
      ports:
-       - "8084:8080"
+       - "8084:8084"

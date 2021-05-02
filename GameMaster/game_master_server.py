@@ -1,4 +1,5 @@
-from http.server import HTTPServer, BaseHTTPRequestHandler
+#from http.server import HTTPServer, BaseHTTPRequestHandler
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 import json
 import requests
 import time
@@ -46,8 +47,6 @@ def manage_tournament(tournament_name, game_type):
     #print(remaining_players_of_tourny[tournament_name])
 
     remaining_matches_of_tourny[tournament_name] = []
-    place2 = ''
-    place3 = ''#TODO
     while len(remaining_players_of_tourny[tournament_name]) != 1:
         #create matches for all the available players
         #print("pre" + str(remaining_players_of_tourny[tournament_name]))
@@ -146,7 +145,8 @@ class game_master_handler(BaseHTTPRequestHandler):
                 if practice_chess_waiting_list == None:
                     practice_chess_waiting_list = username
                     while practice_chess_waiting_list != None:
-                        pass
+                        print("Waiting")
+                        time.sleep(2) 
                     response = json.dumps({"playId": practice_chess_match_queue_id}, indent=4)
                     self.send_response(200)
                     self.send_header('Content-type','application/json')
@@ -154,7 +154,8 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.wfile.write(response.encode("utf-8"))
                 elif practice_chess_waiting_list == username:
                     while practice_chess_waiting_list != None:
-                        pass
+                        print("Waiting")
+                        time.sleep(2) 
                     response = json.dumps({"playId": practice_chess_match_queue_id}, indent=4)
                     self.send_response(200)
                     self.send_header('Content-type','application/json')
@@ -174,7 +175,8 @@ class game_master_handler(BaseHTTPRequestHandler):
                 if practice_ttt_waiting_list == None:
                     practice_ttt_waiting_list = username
                     while practice_ttt_waiting_list != None:
-                        pass
+                        print("Waiting")
+                        time.sleep(2) 
                     response = json.dumps({"playId": practice_ttt_match_queue_id}, indent=4)
                     self.send_response(200)
                     self.send_header('Content-type','application/json')
@@ -182,7 +184,8 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.wfile.write(response.encode("utf-8"))
                 elif practice_ttt_waiting_list == username:
                     while practice_ttt_waiting_list != None:
-                        pass
+                        print("Waiting")
+                        time.sleep(2) 
                     response = json.dumps({"playId": practice_ttt_match_queue_id}, indent=4)
                     self.send_response(200)
                     self.send_header('Content-type','application/json')
@@ -190,8 +193,9 @@ class game_master_handler(BaseHTTPRequestHandler):
                     self.wfile.write(response.encode("utf-8"))
                 else:
                     username1 = practice_ttt_waiting_list
-                    practice_ttt_waiting_list = None
                     match_id = create_play(game_type, username, username1, NO_TOURNAMENT)
+                    practice_ttt_match_queue_id = match_id
+                    practice_ttt_waiting_list = None
                     response = json.dumps({"playId": match_id}, indent=4)
                     self.send_response(200)
                     self.send_header('Content-type','application/json')
@@ -249,8 +253,9 @@ class game_master_handler(BaseHTTPRequestHandler):
 
 
 def main():
-    port = 8080
-    server = HTTPServer(('', port ), game_master_handler)
+    port = 8084
+    #server = HTTPServer(('', port ), game_master_handler)
+    server = ThreadingHTTPServer(('', port ), game_master_handler)
     print('Game Master Server running on port: ' + str(port))
     server.serve_forever()
 

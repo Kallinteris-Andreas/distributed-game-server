@@ -1,5 +1,6 @@
 mongoVolume*
 Auth/__pycache__*
+*/__pycache__*
 PlayMaster/node_modules*
 PlayMaster/package.json
 PlayMaster/package-lock.json
