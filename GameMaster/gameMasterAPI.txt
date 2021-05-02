@@ -67,7 +67,7 @@ Example output for /getTournaments:
 [
 	{
 		"tournamentName":"World Cup",
-		"gameType":"chess",
+		"game_type":"chess",
 		"place1":"Andy",
 		"place2":"user3",
 		"place3":"user1",
@@ -88,7 +88,7 @@ Example output for /getTournaments:
 	},
 	{
 		"tournamentName":"Unfinished Tournament",
-		"gameType":"tictactoe",
+		"game_type":"tictactoe",
 		"place1":"-",
 		"place2":"-",
 		"place3":"-",

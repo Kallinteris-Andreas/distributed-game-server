@@ -54,12 +54,12 @@ curl_close($cq);
 	</div>
 	<div class='mainpage'>
 		<span style='float:right'>Logged in as <i> <?php echo($username)?> </i></span><br><br>
-		Username: <?php echo($username)?> <input type='button' class='bigbtn' onclick='changePsw()' value='Change password...'/>
-		<p>Practice plays score is <?php echo($res['practiceScore'])?> in <?php echo($res['practicePlaysNum'])?> games
-		<p>Tournament plays score is <?php echo($res['tournamentScore'])?> in <?php echo($res['tournamentPlaysNum'])?> games
-		<p>Number of total plays won: <?php echo($res['wins'])?>
-		<p>Number of total ties: <?php echo($res['ties'])?>
-		<p>Number of total plays lost: <?php echo($res['losses'])?>
+		Username: <b><?php echo($username)?></b> <input type='button' class='bigbtn' onclick='changePsw()' value='Change password...'/>
+		<p>Practice plays score is <b> <?php echo($res['practiceScore'])?> </b> in <b><?php echo($res['practicePlaysNum'])?> </b>games
+		<p>Tournament plays score is <b><?php echo($res['tournamentScore'])?></b> in <b><?php echo($res['tournamentPlaysNum'])?></b> games
+		<p>Number of total plays won: <b><?php echo($res['wins'])?></b>
+		<p>Number of total ties: <b><?php echo($res['ties'])?></b>
+		<p>Number of total plays lost: <b><?php echo($res['losses'])?></b>
 		<div>
 <?php
 $playarr=$res['plays'];
