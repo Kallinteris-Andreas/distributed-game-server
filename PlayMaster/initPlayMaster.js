@@ -11,14 +11,16 @@ http.createServer( function (req,res){
             var postData = JSON.parse(postDataJSON);
             MongoClient.connect(url, function(err, db) {
 			  	if (err!=null){
-			  		throw err;
+			  		res.writeHead(500);
+			  		res.end('');
 			  	}
 			  	var dbPlays = db.db("Plays");
 			  	var finResult=[];
 			  	var finCounter=0;
 			 	dbPlays.collection("chessPlays").find({$and:[{$or:[{player1:postData.username},{player2:postData.username}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0,winner:0}}).toArray(function(err,result){
 			 		if(err!=null){
-			 			throw err;
+			 			res.writeHead(500);
+			  			res.end('');
 			 		}
 			 		result.forEach(function(counter){
 			 			var opp;
@@ -38,7 +40,8 @@ http.createServer( function (req,res){
 				});
 				dbPlays.collection("tttPlays").find({$and:[{$or:[{player1:postData.username},{player2:postData.username}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0,winner:0}}).toArray(function(err,result){
 			 		if(err!=null){
-			 			throw err;
+			 			res.writeHead(500);
+			  			res.end('');
 			 		}
 			 		result.forEach(function(counter){
 			 			var opp;
@@ -67,7 +70,8 @@ http.createServer( function (req,res){
             var postData = JSON.parse(postDataJSON);
             MongoClient.connect(url, function(err, db) {
 			  	if (err!=null){
-			  		throw err;
+			  		res.writeHead(500);
+			  		res.end('');
 			  	}
 			  	var dbPlays = db.db("Plays");
 			  	var collName;
@@ -78,7 +82,8 @@ http.createServer( function (req,res){
 			  	}
 			  	dbPlays.collection(collName).findOne({playId:postData.playId},{projection:{_id:0,playId:0,winner:0}},function(err,result){
 			  		if(err!=null){
-			  			throw err;
+			  			res.writeHead(500);
+			  			res.end('');
 			  		}
 			  		if(result==null||(result.player1!=postData.username&&result.player2!=postData.username)){
 			  			res.writeHead(404);
@@ -100,7 +105,8 @@ http.createServer( function (req,res){
             var postData = JSON.parse(postDataJSON);
             MongoClient.connect(url, function(err, db) {
 			  	if (err!=null){
-			  		throw err;
+			  		res.writeHead(500);
+			  		res.end('');
 			  	}
 			  	var dbPlays = db.db("Plays");
 			  	var collName;
@@ -111,7 +117,8 @@ http.createServer( function (req,res){
 			  	}
 			  	dbPlays.collection(collName).findOne({playId:postData.playId},{projection:{_id:0,playId:0,tournamentName:0}},function(err,result){
 			  		if(err!=null){
-			  			throw err;
+			  			res.writeHead(500);
+			  			res.end('');
 			  		}
 			  		if((result.player1!=postData.username && result.player2!=postData.username)|| result.isFinished=="T"){
 			  			res.writeHead(500);
@@ -203,7 +210,8 @@ http.createServer( function (req,res){
             }
             MongoClient.connect(url, function(err, db) {
 			  	if (err!=null){
-			  		throw err;
+			  		res.writeHead(500);
+			  		res.end('');
 			  	}
 			  	var dbPlays = db.db("Plays");
 			  	var collName;
@@ -222,7 +230,8 @@ http.createServer( function (req,res){
 			  	}
 			  	dbPlays.collection(collName).find({playId:postData.playId}).count(function(err,num){
 			  		if(err!=null){
-			  			throw err;
+			  			res.writeHead(500);
+			  			res.end('');
 			  		}
 			  		if(num>0){
 			  			res.writeHead(200);
@@ -232,7 +241,8 @@ http.createServer( function (req,res){
 			  		}
 			  		dbPlays.collection(collName).insertOne({playId:postData.playId,tournamentName:postData.tournamentName,player1:postData.player1,player2:postData.player2,gameState:initGameState,isFinished:"F",winner:""},function(err,insRes){
 						if(err!=null){
-				  			throw err;
+				  			res.writeHead(500);
+			  				res.end('');
 						}
 			  			res.writeHead(200);
 			  			res.end('');

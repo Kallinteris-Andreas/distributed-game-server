@@ -1,7 +1,7 @@
 <?php 
 //params: token(GET)
 //returns: forwards result from playMaster/availPlays
-
+set_time_limit(0);
 if(isset($_GET['token'])){
 	$cq=curl_init();
 	curl_setopt($cq,CURLOPT_URL,'http://authmanager:42069/validateToken');
@@ -26,13 +26,16 @@ if($role[0]!=1){
 	http_response_code(500);
 	exit();
 }
-$cq=curl_init();
-curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/availPlays');
-curl_setopt($cq,CURLOPT_POST,true);
-curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
-$postValue=json_encode(array('username'=>$username));
-curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
-curl_exec($cq);
-curl_close($cq);
+$alivePlayMaster=false;
+while($alivePlayMaster===false){
+	$cq=curl_init();
+	curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/availPlays');
+	curl_setopt($cq,CURLOPT_POST,true);
+	curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
+	$postValue=json_encode(array('username'=>$username));
+	curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
+	$alivePlayMaster=curl_exec($cq);
+	curl_close($cq);
+}
 
 ?>

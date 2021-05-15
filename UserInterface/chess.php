@@ -1,4 +1,5 @@
 <?php 
+set_time_limit(0);
 if(isset($_GET['token'])&&isset($_GET['playId'])){
 	$cq=curl_init();
 	curl_setopt($cq,CURLOPT_URL,'http://authmanager:42069/validateToken');
@@ -21,18 +22,21 @@ if(isset($_GET['token'])&&isset($_GET['playId'])){
 if($role[0]!='1'){
 	exit(header("Location: index.php?token=".$_GET['token']));
 }
-$cq=curl_init();
-curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/getPlay');
-curl_setopt($cq,CURLOPT_POST,true);
-curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
-curl_setopt($cq, CURLOPT_RETURNTRANSFER,true);
-$postValue=json_encode(array('playId'=>(int)$_GET['playId'],'gameType'=>'chess','username'=>$username));
-curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
-$gameinfo=curl_exec($cq);
-if($gameinfo==false||curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){
-	exit(header("Location: index.php"));
+$gameinfo=false;
+while($gameinfo===false){
+	$cq=curl_init();
+	curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/getPlay');
+	curl_setopt($cq,CURLOPT_POST,true);
+	curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
+	curl_setopt($cq, CURLOPT_RETURNTRANSFER,true);
+	$postValue=json_encode(array('playId'=>(int)$_GET['playId'],'gameType'=>'chess','username'=>$username));
+	curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
+	$gameinfo=curl_exec($cq);
+	if($gameinfo!==false && curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){
+		exit(header("Location: index.php"));
+	}
+	curl_close($cq);
 }
-curl_close($cq);
 $gameinfoarr=json_decode($gameinfo,true);
 //player1 is white, player2 is black
 $opponent=$gameinfoarr['player1'];
@@ -94,13 +98,16 @@ if($gameinfoarr['player1']==$username){
 		req.onreadystatechange=function(){
 			if(this.readyState==4){
 				if(this.status!=200){
+					if(this.status!=500 && this.status!=404){
+						setTimeout(getPlayState,700);
+					}
 					return;
 				}
 				game.load(this.responseText);
 				board.position(game.fen());
 				updateStatus(null);
 				if(!game.game_over() && game.turn()!=='<?php echo($mycolor)?>'){
-					setTimeout(getPlayState,1000);
+					setTimeout(getPlayState,700);
 				}
 				if(game.game_over() && game.turn()==='<?php echo($mycolor)?>'){
 					var ping=new XMLHttpRequest();
