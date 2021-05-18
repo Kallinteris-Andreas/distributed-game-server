@@ -1,0 +1,215 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: userinterface
+spec:
+  type: NodePort
+  selector:
+    app: prj-ui
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 30100
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-deployment
+spec:
+  selector:
+    matchLabels:
+      app: prj-ui
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prj-ui
+    spec:
+      containers:
+      - name: uicont
+        image: php:7.4-apache
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: uivol
+      volumes:
+      - name: uivol
+        hostPath:
+          path: /hostprj/UserInterface
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  selector:
+    app: prj-mongo
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodatavol
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-deployment
+spec:
+  selector:
+    matchLabels:
+      app: prj-mongo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prj-mongo
+    spec:
+      containers:
+      - name: mongocont
+        image: mongo
+        args: [--nojournal]
+        volumeMounts:
+        - mountPath: /docker-entrypoint-initdb.d
+          name: mongovol
+        - mountPath: /data/db
+          name: mongodatavol
+      volumes:
+      - name: mongovol
+        hostPath:
+          path: /hostprj/MongoDB
+          type: Directory
+      - name: mongodatavol
+        persistentVolumeClaim:
+          claimName: mongodatavol
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authmanager
+spec:
+  selector:
+    app: prj-auth
+  ports:
+    - protocol: TCP
+      port: 42069
+      targetPort: 42069
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+spec:
+  selector:
+    matchLabels:
+      app: prj-auth
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prj-auth
+    spec:
+      containers:
+      - name: authcont
+        image: python:3
+        command: ['/bin/sh', 'init.sh']
+        workingDir: /usr/src/app
+        volumeMounts:
+        - mountPath: /usr/src/app
+          name: authvol
+      volumes:
+      - name: authvol
+        hostPath:
+          path: /hostprj/Auth
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gamemaster
+spec:
+  selector:
+    app: prj-gm
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gm-deployment
+spec:
+  selector:
+    matchLabels:
+      app: prj-gm
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prj-gm
+    spec:
+      containers:
+      - name: gmcont
+        image: python:3
+        command: ['/bin/sh', 'init.sh']
+        workingDir: /usr/src/app
+        volumeMounts:
+        - mountPath: /usr/src/app
+          name: gmvol
+      volumes:
+      - name: gmvol
+        hostPath:
+          path: /hostprj/GameMaster
+          type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: playmaster
+spec:
+  selector:
+    app: prj-pm
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pm-deployment
+spec:
+  selector:
+    matchLabels:
+      app: prj-pm
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: prj-pm
+    spec:
+      containers:
+      - name: pmcont
+        image: node
+        command: ['/bin/sh', 'init.sh']
+        workingDir: /home/node/app
+        volumeMounts:
+        - mountPath: /home/node/app
+          name: pmvol
+      volumes:
+      - name: pmvol
+        hostPath:
+          path: /hostprj/PlayMaster
+          type: Directory
