@@ -126,13 +126,31 @@ spec:
         command: ['/bin/sh', 'init.sh']
         workingDir: /usr/src/app
         volumeMounts:
-        - mountPath: /usr/src/app
-          name: authvol
+        - mountPath: /usr/src/app/auth.db
+          name: authvol1
+        - mountPath: /usr/src/app/auth_db.py
+          name: authvol2
+        - mountPath: /usr/src/app/auth_server.py
+          name: authvol3
+        - mountPath: /usr/src/app/init.sh
+          name: authvol4
       volumes:
-      - name: authvol
+      - name: authvol1
         hostPath:
-          path: /hostprj/Auth
-          type: Directory
+          path: /hostprj/Auth/auth.db
+          type: File
+      - name: authvol2
+        hostPath:
+          path: /hostprj/Auth/auth_db.py
+          type: File
+      - name: authvol3
+        hostPath:
+          path: /hostprj/Auth/auth_server.py
+          type: File
+      - name: authvol4
+        hostPath:
+          path: /hostprj/Auth/init.sh
+          type: File
 ---
 apiVersion: v1
 kind: Service
@@ -166,13 +184,37 @@ spec:
         command: ['/bin/sh', 'init.sh']
         workingDir: /usr/src/app
         volumeMounts:
-        - mountPath: /usr/src/app
-          name: gmvol
+        - mountPath: /usr/src/app/game_master.db
+          name: gmvol1
+        - mountPath: /usr/src/app/game_master_db.py
+          name: gmvol2
+        - mountPath: /usr/src/app/game_master_mongo_interface.py
+          name: gmvol3
+        - mountPath: /usr/src/app/game_master_server.py
+          name: gmvol4
+        - mountPath: /usr/src/app/init.sh
+          name: gmvol5
       volumes:
-      - name: gmvol
+      - name: gmvol1
         hostPath:
-          path: /hostprj/GameMaster
-          type: Directory
+          path: /hostprj/GameMaster/game_master.db
+          type: File
+      - name: gmvol2
+        hostPath:
+          path: /hostprj/GameMaster/game_master_db.py
+          type: File
+      - name: gmvol3
+        hostPath:
+          path: /hostprj/GameMaster/game_master_mongo_interface.py
+          type: File
+      - name: gmvol4
+        hostPath:
+          path: /hostprj/GameMaster/game_master_server.py
+          type: File
+      - name: gmvol5
+        hostPath:
+          path: /hostprj/GameMaster/init.sh
+          type: File
 ---
 apiVersion: v1
 kind: Service
@@ -206,10 +248,16 @@ spec:
         command: ['/bin/sh', 'init.sh']
         workingDir: /home/node/app
         volumeMounts:
-        - mountPath: /home/node/app
-          name: pmvol
+        - mountPath: /home/node/app/init.sh
+          name: pmvol1
+        - mountPath: /home/node/app/initPlayMaster.js
+          name: pmvol2
       volumes:
-      - name: pmvol
+      - name: pmvol1
         hostPath:
-          path: /hostprj/PlayMaster
-          type: Directory
+          path: /hostprj/PlayMaster/init.sh
+          type: File
+      - name: pmvol2
+        hostPath:
+          path: /hostprj/PlayMaster/initPlayMaster.js
+          type: File
