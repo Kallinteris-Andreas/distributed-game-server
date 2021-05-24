@@ -28,9 +28,19 @@ def create_play(game_type, username0, username1, tournament_name):
     db_lock.release()
     data = {'playId': match_id, 'player1': username0, "player2": username1, "gameType": game_type, "tournamentName" : tournament_name}
     json_data = json.dumps(data, indent = 4)
-    r = requests.post(url = play_master_url + "createPlay", data = json_data)
-    while not r.ok:
-        r = requests.post(url = play_master_url + "createPlay", data = json_data)
+    while True:
+        try:
+            r = requests.post(url = play_master_url + "createPlay", data = json_data)
+            while not r.ok:
+                r = requests.post(url = play_master_url + "createPlay", data = json_data)
+            break
+        except ConnectionRefusedError:
+            time.sleep(1)
+            continue
+        except:
+            time.sleep(1)
+            continue
+
     return match_id
 
 def list_of_players():
