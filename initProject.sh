@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 minikube start
 minikube mount .:/hostprj &
 minikube kubectl -- apply -f ./project.yaml
