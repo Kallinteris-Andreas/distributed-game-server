@@ -27,7 +27,7 @@ if($role[0]!='1'){
   <title>Play</title>
   <link rel="stylesheet" type="text/css" href="styles.css">
  </head>
- <body onload='getAvailPlays()'>
+ <body onload='updatePlays()'>
  	<div class='menubar'>
  		<ul>
  			<li><a href='profile.php?token=<?php echo($_GET["token"]) ?>'>My profile</a></li>
@@ -52,6 +52,9 @@ if($role[0]!='1'){
 		<h2>Available plays:</h2>
 		<div id='availPlays'>
 		</div>
+		<h2>Spectate:</h2>
+		<div id='specPlays'>
+		</div>
 
 	</div>
 
@@ -59,6 +62,10 @@ if($role[0]!='1'){
 		var req=null;
 		var animActive=false;
 		var gameTypeReq=null;
+		function updatePlays(){
+			getAvailPlays();
+			getSpecPlays();
+		}
 		function practicePlay(gameType){
 			var link='chess';
 			if(gameType=='tictactoe'){
@@ -119,8 +126,8 @@ if($role[0]!='1'){
 				window.location.replace("ttt.php"+strVars);
 			}
 		}
-		function updateAvailPlays(req){
-			var res=JSON.parse(req.responseText);
+		function updateAvailPlays(request){
+			var res=JSON.parse(request.responseText);
 		 	if(res.length==0){
 		 		document.getElementById('availPlays').innerHTML='No available plays';
 		 		return;
@@ -146,16 +153,54 @@ if($role[0]!='1'){
 		 	document.getElementById('availPlays').innerHTML=str;
 		}
 		function getAvailPlays(){
-			var req=new XMLHttpRequest();
-			req.onreadystatechange=function(){
+			let availReq=new XMLHttpRequest();
+			availReq.onreadystatechange=function(){
 				if(this.readyState==4 && this.status==200){
 					updateAvailPlays(this);
 				}
 			}
-			req.open("GET",'funcs/getAvailPlays.php?token=<?php echo($_GET["token"])?>',true);
-			req.send();
+			availReq.open("GET",'funcs/getAvailPlays.php?token=<?php echo($_GET["token"])?>',true);
+			availReq.send();
 		}
-
+		function getSpecPlays(){
+			var specReq=new XMLHttpRequest();
+			specReq.onreadystatechange=function(){
+				if(this.readyState==4 && this.status==200){
+					updateSpecPlays(this);
+				}
+			}
+			specReq.open("GET",'funcs/getSpecPlays.php?token=<?php echo($_GET["token"])?>',true);
+			specReq.send();
+		}
+		function updateSpecPlays(request){
+			var res=JSON.parse(request.responseText);
+		 	if(res.length==0){
+		 		document.getElementById('specPlays').innerHTML='No available plays';
+		 		return;
+		 	}
+		 	var str='<table><tr><th>Game type</th><th>Players</th><th>Tournament name/Practice</th><th class="noborder"></th></tr>';
+		 	for(var i=0; i<res.length; i++){
+		 		str+='<tr><td>';
+		 		if(res[i].gameType=='chess'){
+		 			str+='Chess';
+		 		}else if(res[i].gameType=='tictactoe'){
+		 			str+='Tic Tac Toe';
+		 		}
+		 		str+='</td><td>'+res[i].player1+' - '+res[i].player2+'</td><td>';
+		 		if(res[i].tournamentName==""){
+		 			str+='Practice';
+		 		}else{
+		 			str+=res[i].tournamentName;
+		 		}
+		 		str+='</td><td class="noborder"><input type="button" class="bigbtn fill"';
+		 		str+=' onclick="specGame('+res[i].playId+','+"'"+res[i].gameType+"'"+')" value="Spectate"/></td></tr>';
+		 	}
+		 	str+='</table>';
+		 	document.getElementById('specPlays').innerHTML=str;
+		}
+		function specGame(playId,gameType){
+			window.location.replace('spectate.php?playId='+playId+'&token=<?php echo($_GET["token"]) ?>&gameType='+gameType);
+		}
 	</script>
  </body>
 </html>

@@ -29,7 +29,7 @@ while($gameinfo===false){
 	curl_setopt($cq,CURLOPT_POST,true);
 	curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
 	curl_setopt($cq, CURLOPT_RETURNTRANSFER,true);
-	$postValue=json_encode(array('playId'=>(int)$_GET['playId'],'gameType'=>'chess','username'=>$username));
+	$postValue=json_encode(array('playId'=>(int)$_GET['playId'],'gameType'=>'chess'));
 	curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
 	$gameinfo=curl_exec($cq);
 	if($gameinfo!==false && curl_getinfo($cq, CURLINFO_HTTP_CODE)!=200){

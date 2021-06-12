@@ -61,6 +61,53 @@ http.createServer( function (req,res){
 			 	});
 			});
         });
+	}else if(req.url=="/specPlays"){
+		var postDataJSON='';
+		req.on('data', function (data) {
+            postDataJSON += data;
+        });
+        req.on('end', function () {
+            var postData = JSON.parse(postDataJSON);
+            MongoClient.connect(url, function(err, db) {
+			  	if (err!=null){
+			  		res.writeHead(500);
+			  		res.end('');
+			  	}
+			  	var dbPlays = db.db("Plays");
+			  	var finResult=[];
+			  	var finCounter=0;
+			 	dbPlays.collection("chessPlays").find({$and:[{$and:[{player1:{$ne:postData.username}},{player2:{$ne:postData.username}}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0,winner:0}}).toArray(function(err,result){
+			 		if(err!=null){
+			 			res.writeHead(500);
+			  			res.end('');
+			 		}
+			 		result.forEach(function(counter){
+			 			finResult.push({playId:counter.playId,tournamentName:counter.tournamentName,player1:counter.player1,player2:counter.player2,gameType:"chess"});
+			 		});
+			 		finCounter++;
+			 		if(finCounter==2){
+			 			res.writeHead(200, {'Content-Type': 'application/json'});
+						res.end(JSON.stringify(finResult));
+						db.close();
+			 		}
+				});
+				dbPlays.collection("tttPlays").find({$and:[{$and:[{player1:{$ne:postData.username}},{player2:{$ne:postData.username}}]},{isFinished:"F"}]},{projection:{_id:0,gameState:0,isFinished:0,winner:0}}).toArray(function(err,result){
+			 		if(err!=null){
+			 			res.writeHead(500);
+			  			res.end('');
+			 		}
+			 		result.forEach(function(counter){
+			 			finResult.push({playId:counter.playId,tournamentName:counter.tournamentName,player1:counter.player1,player2:counter.player2,gameType:"tictactoe"});
+			 		});
+			 		finCounter++;
+			 		if(finCounter==2){
+			 			res.writeHead(200, {'Content-Type': 'application/json'});
+						res.end(JSON.stringify(finResult));
+						db.close();
+			 		}
+			 	});
+			});
+        });
 	}else if(req.url=="/getPlay"){
 		var postDataJSON='';
 		req.on('data', function (data) {
@@ -85,7 +132,7 @@ http.createServer( function (req,res){
 			  			res.writeHead(500);
 			  			res.end('');
 			  		}
-			  		if(result==null||(result.player1!=postData.username&&result.player2!=postData.username)){
+			  		if(result==null){
 			  			res.writeHead(404);
 			  			res.end('');
 			  		}else{

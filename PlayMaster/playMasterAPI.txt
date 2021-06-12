@@ -23,7 +23,8 @@ isFinished is "T" (True) or "F" (False)
 Method - Url - Input as JSON - Output (ResponseCode&Body)
 
 POST - /availPlays - username - [{playId,tournamentName("" if practice),opponent,gameType('chess','tictactoe')},...]
-POST - /getPlay - username,playId,gameType('chess','tictactoe') - 200&{tournamentName,player1,player2,gameState,isFinished}/404&''
+POST - /specPlays - username - [{playId,tournamentName("" if practice),player1,player2,gameType('chess','tictactoe')},...]
+POST - /getPlay - playId,gameType('chess','tictactoe') - 200&{tournamentName,player1,player2,gameState,isFinished}/404&''
 POST - /updatePlay - username,gameType,playId,move - 200&''/500&''
 POST - /createPlay - playId,player1,player2,gameType,tournamentName - 200&''
 

@@ -1,9 +1,8 @@
 <?php 
-//GET params: token
-//POST params: gameType('chess','tictactoe'),playId
-//returns: 200&gameState/404&''
+//params: token(GET)
+//returns: forwards result from playMaster/availPlays
 set_time_limit(0);
-if(isset($_GET['token'])&&isset($_POST['gameType'])&&isset($_POST['playId'])){
+if(isset($_GET['token'])){
 	$cq=curl_init();
 	curl_setopt($cq,CURLOPT_URL,'http://authmanager:42069/validateToken');
 	curl_setopt($cq, CURLOPT_RETURNTRANSFER,true);
@@ -21,30 +20,22 @@ if(isset($_GET['token'])&&isset($_POST['gameType'])&&isset($_POST['playId'])){
 	}
 	curl_close($cq);
 }else{
-	http_response_code(500);
-	exit();
+	exit(header("Location: index.php"));
 }
 if($role[0]!=1){
 	http_response_code(500);
 	exit();
 }
-$result=false;
-$code=0;
-while($result===false){
+$alivePlayMaster=false;
+while($alivePlayMaster===false){
 	$cq=curl_init();
-	curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/getPlay');
+	curl_setopt($cq,CURLOPT_URL,'http://playmaster:8080/specPlays');
 	curl_setopt($cq,CURLOPT_POST,true);
-	curl_setopt($cq,CURLOPT_RETURNTRANSFER,true);
 	curl_setopt($cq,CURLOPT_HTTPHEADER,array('Content-Type: application/json'));
-	$postValue=json_encode(array('gameType'=>$_POST['gameType'],'playId'=>(int)$_POST['playId']));
+	$postValue=json_encode(array('username'=>$username));
 	curl_setopt($cq,CURLOPT_POSTFIELDS,$postValue);
-	$result=curl_exec($cq);
-	$code=curl_getinfo($cq, CURLINFO_HTTP_CODE);
+	$alivePlayMaster=curl_exec($cq);
 	curl_close($cq);
 }
-http_response_code($code);
-if(http_response_code()==200){
-	$decresult=json_decode($result,true);
-	echo($decresult['gameState']);
-}
+
 ?>
